@@ -2247,9 +2247,18 @@
             
             renderTopics();
             
-            document.getElementById('topics-list').classList.remove('hidden');
-            document.getElementById('script-detail').classList.add('hidden');
-            document.getElementById('script-result').classList.add('hidden');
+            const topicsList = document.getElementById('topics-list');
+            if (topicsList) {
+                topicsList.classList.remove('hidden');
+            }
+            const scriptDetail = document.getElementById('script-detail');
+            if (scriptDetail) {
+                scriptDetail.classList.add('hidden');
+            }
+            const scriptResult = document.getElementById('script-result');
+            if (scriptResult) {
+                scriptResult.classList.add('hidden');
+            }
             
             lucide.createIcons();
         }
@@ -2830,13 +2839,11 @@
         // Initialize
         initTheme();
         
-        // Render competitor cards and auto-generate topics on page load
+        // Render competitor cards on page load
         document.addEventListener('DOMContentLoaded', function() {
             renderCompetitorCards();
-            // 内容生产页面自动加载刘彭远专属选题
-            if (document.getElementById('page-production')) {
-                generateTopics();
-            }
+            // 预加载选题数据到currentTopics，但不显示列表
+            currentTopics = liuPengyuanTopics;
         });
     </script>
 </body>
