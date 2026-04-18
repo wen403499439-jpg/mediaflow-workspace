@@ -2303,15 +2303,28 @@
             document.getElementById('script-result').classList.add('hidden');
         }
         
-        // 生成完整脚本 - 刘彭远IP专属
-        function generateScript() {
+        // 生成完整脚本 - 刘彭远IP专属（异步AI版本）
+        async function generateScript() {
             const duration = parseInt(document.getElementById('script-duration').value) || selectedTopic.duration || 60;
             const format = document.getElementById('script-format').value;
             const audience = document.getElementById('script-audience').value;
             const keypoints = document.getElementById('script-keypoints').value;
             
-            // 根据主题生成专属脚本内容
-            const scriptData = generateLiuPengyuanScript(selectedTopic, duration, format, audience);
+            // 显示加载状态
+            const generateBtn = document.querySelector('#script-detail button[onclick="generateScript()"]');
+            const originalText = generateBtn.innerHTML;
+            generateBtn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 inline mr-2 animate-spin"></i>AI生成中...';
+            generateBtn.disabled = true;
+            lucide.createIcons();
+            
+            try {
+                // 根据主题生成专属脚本内容（调用AI）
+                const scriptData = await generateLiuPengyuanScript(selectedTopic, duration, format, audience);
+                
+                // 恢复按钮状态
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+                lucide.createIcons();
             
             const scriptHTML = `
                 <div class="space-y-6">
@@ -2445,10 +2458,19 @@
             document.getElementById('script-detail').classList.add('hidden');
             document.getElementById('script-result').classList.remove('hidden');
             lucide.createIcons();
+            } catch (error) {
+                // 恢复按钮状态
+                generateBtn.innerHTML = originalText;
+                generateBtn.disabled = false;
+                lucide.createIcons();
+                
+                showNotification('AI生成失败，请重试', 'error');
+                console.error('生成脚本失败:', error);
+            }
         }
         
-        // 刘彭远专属脚本生成器
-        function generateLiuPengyuanScript(topic, duration, format, audience) {
+        // 刘彭远专属脚本生成器（异步版本）
+        async function generateLiuPengyuanScript(topic, duration, format, audience) {
             // 根据主题关键词匹配脚本模板
             const topicLower = topic.title.toLowerCase();
             
@@ -2469,8 +2491,8 @@
             
             scriptTemplate.framework = defaultFramework;
             
-            // 生成逐字稿
-            scriptTemplate.fullScript = generateFullScript(topic, duration, audience);
+            // 生成逐字稿（调用AI）
+            scriptTemplate.fullScript = await generateFullScript(topic, duration, audience);
             
             // 拍摄建议
             scriptTemplate.shooting = {
@@ -2514,58 +2536,97 @@
             return scriptTemplate;
         }
         
-        // 生成完整逐字稿
-        function generateFullScript(topic, duration, audience) {
+        // 智谱GLM-4 API配置
+        const ZHIPU_API_KEY = '2b4a4d530b3a4103ac1216a040f31399.Gg3zuNmajcylwozc';
+        const ZHIPU_API_URL = 'https://open.bigmodel.cn/api/paas/v4/chat/completions';
+        
+        // 调用智谱GLM-4生成脚本
+        async function callZhipuAI(prompt) {
+            try {
+                const response = await fetch(ZHIPU_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${ZHIPU_API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        model: 'glm-4',
+                        messages: [
+                            {
+                                role: 'system',
+                                content: '你是刘彭远，一位专注5-25岁儿童青少年心智成长架构师，心理学×颅骶椎融合疗愈开创者。你的风格是专业、温和、有洞察力，善于用通俗易懂的语言解释复杂的身心整合概念。'
+                            },
+                            {
+                                role: 'user',
+                                content: prompt
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 2000
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API请求失败: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                return data.choices[0].message.content;
+            } catch (error) {
+                console.error('智谱API调用失败:', error);
+                throw error;
+            }
+        }
+        
+        // 生成完整逐字稿 - 使用AI
+        async function generateFullScript(topic, duration, audience) {
             const wordCount = Math.round(duration * 2.3);
             const topicTitle = topic.title;
+            const category = topic.category;
+            const target = topic.target;
             
-            // 根据主题类型生成不同风格的脚本
-            if (topicTitle.includes('注意力不集中') || topicTitle.includes('走神')) {
-                return `你知道吗？孩子上课走神、坐不住，可能不是态度问题，而是身体在发出信号。
+            const prompt = `请为以下短视频主题生成完整的逐字稿脚本：
 
-我是刘彭远，专注5到25岁儿童青少年的心智成长。在我15年的从业经历中，见过太多家长因为孩子的专注力问题而焦虑。
+主题：${topicTitle}
+时长：${duration}秒（约${wordCount}字）
+分类：${category}
+目标受众：${target}
 
-很多家长都遇到过这种情况：孩子坐不住、学习效率低、老师总反映不专心。打也打了，骂也骂了，就是改不了。其实，从颅骶疗法的角度看，这可能与孩子的颅骶节律失衡有关。
+要求：
+1. 以刘彭远的身份和口吻撰写
+2. 开头3秒必须有强钩子，抓住注意力
+3. 中间部分提供专业见解和实用价值
+4. 结尾有行动号召（关注、互动等）
+5. 语言风格：专业但不晦涩，温和有亲和力
+6. 融入颅骶疗法和身心整合的专业视角
+7. 适合短视频口播，节奏感强
 
-我们的大脑和脊髓被一层薄膜包裹着，这层薄膜有自己的律动节律，叫做颅骶节律。当这个节律顺畅时，孩子自然专注、平静；当节律受阻时，就会出现注意力分散、情绪不稳等问题。
+请直接输出逐字稿内容，不需要标注时间戳。`;
 
-通过温和的颅骶调理，不需要药物，不需要强迫训练，只需要帮助孩子恢复自然的身心节律，专注力问题往往能得到明显改善。我经手的一个案例中，一个8岁男孩经过3个月的调理，从班级倒数进步到了前十名。
-
-如果你也想了解更多关于儿童专注力提升的方法，关注我，我是刘彭远，帮你读懂孩子身体里的秘密。`;
-            } else if (topicTitle.includes('睡眠')) {
-                return `孩子晚上睡不着、夜醒频繁？刘彭远教你3招，不用药物改善孩子睡眠。
-
-第一招，睡前颅骶放松。用温和的触摸，帮助孩子的大脑从兴奋状态切换到放松状态。具体做法是...
-
-第二招，调整呼吸节律。引导孩子做深呼吸，配合颅骶节律的引导...
-
-第三招，建立睡眠仪式。固定的睡前程序，让孩子的身体形成条件反射...
-
-我是刘彭远，专注儿童青少年心智成长。睡眠问题往往是身心失衡的信号，找到根源才能真正解决。关注我，了解更多身心整合的养育方法。`;
-            } else if (topicTitle.includes('情绪失控')) {
-                return `为什么你的孩子总是情绪失控？动不动就发脾气、哭闹不止？
-
-我是刘彭远。很多家长问我，孩子情绪管理的问题到底出在哪里？其实，从身心整合的角度看，情绪失控往往是神经系统调节功能出现紊乱的表现。
-
-我们的颅骶系统与情绪调节密切相关。当颅骶节律受阻时，副交感神经系统功能下降，孩子就很难平静下来。这不是孩子故意不听话，而是身体真的做不到。
-
-通过颅骶疗法，我们可以帮助孩子恢复神经系统的平衡，让情绪调节能力自然提升。不需要说教，不需要惩罚，只需要温和地触碰和引导。
-
-关注我，我是刘彭远，用科学的方法帮你读懂孩子的情绪密码。`;
-            } else {
-                // 通用脚本模板
-                return `${topicTitle}。
-
-我是刘彭远，专注5到25岁儿童青少年的心智成长，整合心理学、中医经络和颅骶疗法，帮助超过3000个家庭解决孩子成长中的难题。
-
-很多家长都面临这样的困惑：${audience === 'parent' ? '孩子的问题到底出在哪里？为什么传统方法效果不好？' : '如何提升自己的专业能力？怎样更好地帮助孩子？'}
-
-从身心整合的角度看，孩子的行为问题往往不是单一因素造成的。心理学看认知和情绪，中医看气血和经络，颅骶疗法看节律和神经系统。只有把这些整合起来，才能找到真正的解决方案。
-
-在我的实践中，我发现${topicTitle.includes('颅骶') ? '颅骶节律的调理' : '身心整合的方法'}对改善孩子的${topicTitle.includes('专注') ? '专注力' : topicTitle.includes('情绪') ? '情绪管理' : '身心健康'}有显著效果。
-
-如果你也想${audience === 'parent' ? '帮助孩子更好地成长' : '提升专业能力'}，关注我，我是刘彭远，带你探索心智成长的奥秘。`;
+            try {
+                const aiScript = await callZhipuAI(prompt);
+                return aiScript;
+            } catch (error) {
+                console.error('AI生成失败，使用备用模板:', error);
+                // AI失败时返回备用模板
+                return generateFallbackScript(topic, duration, audience);
             }
+        }
+        
+        // 备用脚本模板（AI失败时使用）
+        function generateFallbackScript(topic, duration, audience) {
+            const wordCount = Math.round(duration * 2.3);
+            return `${topic.title}。
+
+我是刘彭远，专注5到25岁儿童青少年的心智成长，整合心理学和颅骶疗法，帮助超过3000个家庭解决孩子成长中的难题。
+
+很多家长都面临这样的困惑：孩子的问题到底出在哪里？为什么传统方法效果不好？
+
+从身心整合的角度看，孩子的行为问题往往不是单一因素造成的。心理学看认知和情绪，颅骶疗法看节律和神经系统。只有把这些整合起来，才能找到真正的解决方案。
+
+在我的实践中，我发现颅骶节律的调理对改善孩子的身心健康有显著效果。
+
+如果你也想帮助孩子更好地成长，关注我，我是刘彭远，带你探索心智成长的奥秘。`;
         }
         
         // 复制完整脚本
