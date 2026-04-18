@@ -921,39 +921,45 @@
                         </div>
                     </div>
                     
-                    <!-- Step 1: Generate 10 Topics -->
+                    <!-- Step 1: AI 智能生成 10 条选题 -->
                     <div class="max-w-4xl mx-auto mb-8">
                         <div class="glass-card rounded-2xl p-8">
-                            <div class="flex items-center gap-3 mb-6">
-                                <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold">1</div>
-                                <h4 class="font-semibold text-lg">生成 10 条短视频主题</h4>
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold">1</div>
+                                    <div>
+                                        <h4 class="font-semibold text-lg">AI 智能选题</h4>
+                                        <p class="text-sm text-slate-400">基于刘彭远IP定位自动生成</p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-800">
+                                    <i data-lucide="user" class="w-4 h-4 text-primary-500"></i>
+                                    <span class="text-sm text-primary-700 dark:text-primary-400">刘彭远 · 心智成长架构师</span>
+                                </div>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">内容方向</label>
-                                    <select id="content-direction" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
-                                        <option value="parent">家长教育类（面向5-25岁家长）</option>
-                                        <option value="professional">从业者专业类（面向心理/疗愈从业者）</option>
-                                        <option value="case">案例分享类（真实疗愈故事）</option>
-                                        <option value="knowledge">知识科普类（颅骶/心理学/身心整合）</option>
-                                    </select>
+                            <!-- IP 定位信息卡片 -->
+                            <div class="p-4 rounded-xl bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 border border-primary-200 dark:border-primary-800 mb-6">
+                                <div class="flex flex-wrap gap-2 mb-3">
+                                    <span class="px-2 py-1 rounded-full text-xs bg-white dark:bg-slate-700 border border-primary-200 dark:border-primary-700 text-primary-700 dark:text-primary-400">心理学×颅骶椎融合</span>
+                                    <span class="px-2 py-1 rounded-full text-xs bg-white dark:bg-slate-700 border border-primary-200 dark:border-primary-700 text-primary-700 dark:text-primary-400">5-25岁儿童青少年</span>
+                                    <span class="px-2 py-1 rounded-full text-xs bg-white dark:bg-slate-700 border border-primary-200 dark:border-primary-700 text-primary-700 dark:text-primary-400">家长+从业者+机构</span>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium mb-2">核心关键词（可选）</label>
-                                    <input type="text" id="topic-keywords" placeholder="例如：专注力、情绪管理、颅骶疗法" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
-                                </div>
+                                <p class="text-sm text-slate-600 dark:text-slate-400">
+                                    <i data-lucide="target" class="w-4 h-4 inline mr-1"></i>
+                                    目标人群：儿童青少年家长、心理从业者、技术学习者、教育机构
+                                </p>
                             </div>
                             
                             <button onclick="generateTopics()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium w-full">
                                 <i data-lucide="sparkles" class="w-4 h-4 inline mr-2"></i>
-                                生成 10 条主题
+                                根据定位生成 10 条爆款选题
                             </button>
                         </div>
                     </div>
                     
                     <!-- Generated Topics List -->
-                    <div id="topics-list" class="max-w-4xl mx-auto mb-8 hidden">
+                    <div id="topics-list" class="max-w-4xl mx-auto mb-8">
                         <div class="glass-card rounded-2xl p-8">
                             <div class="flex items-center justify-between mb-6">
                                 <div class="flex items-center gap-3">
@@ -1615,95 +1621,10 @@
                                 <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">颅骶疗法</button>
                             </div>
                             
-                            <!-- Competitor Cards -->
-                            <div class="space-y-4">
-                                <!-- Competitor 1 -->
-                                <div class="glass-card rounded-2xl p-6">
-                                    <div class="flex items-start gap-4">
-                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-                                            李
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <div>
-                                                    <h4 class="font-semibold text-lg">李玫瑾</h4>
-                                                    <p class="text-sm text-slate-400">犯罪心理学教授 · 青少年心理专家</p>
-                                                </div>
-                                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">头部账号</span>
-                                            </div>
-                                            <div class="grid grid-cols-3 gap-4 mb-4">
-                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                                                    <p class="font-bold text-lg">1200万+</p>
-                                                    <p class="text-xs text-slate-400">粉丝数</p>
-                                                </div>
-                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                                                    <p class="font-bold text-lg">500+</p>
-                                                    <p class="text-xs text-slate-400">作品数</p>
-                                                </div>
-                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                                                    <p class="font-bold text-lg">50万+</p>
-                                                    <p class="text-xs text-slate-400">均播</p>
-                                                </div>
-                                            </div>
-                                            <div class="space-y-2">
-                                                <p class="text-sm"><span class="text-slate-400">内容特点：</span>专业权威、案例丰富、语言通俗，擅长用犯罪心理学视角解读青少年问题</p>
-                                                <p class="text-sm"><span class="text-slate-400">近期爆款：</span>「孩子青春期叛逆怎么办」「如何识别孩子的危险信号」</p>
-                                                <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mt-3">
-                                                    <p class="text-xs text-amber-700 dark:text-amber-400 font-medium mb-1">🔥 最新爆款追踪</p>
-                                                    <p class="text-sm">「专注力训练」话题昨日新增播放 500万+</p>
-                                                    <p class="text-xs text-slate-500 mt-1">建议跟进角度：从颅骶节律解读专注力问题</p>
-                                                </div>
-                                                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
-                                                    <p class="text-sm text-primary-600 font-medium">💡 对标价值：学习其专业内容的通俗化表达，建立权威感的同时保持亲和力</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Competitor 2 -->
-                                <div class="glass-card rounded-2xl p-6">
-                                    <div class="flex items-start gap-4">
-                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
-                                            武
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="flex items-center justify-between mb-2">
-                                                <div>
-                                                    <h4 class="font-semibold text-lg">武志红</h4>
-                                                    <p class="text-sm text-slate-400">知名心理咨询师 · 心理学作家</p>
-                                                </div>
-                                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">头部账号</span>
-                                            </div>
-                                            <div class="grid grid-cols-3 gap-4 mb-4">
-                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                                                    <p class="font-bold text-lg">800万+</p>
-                                                    <p class="text-xs text-slate-400">粉丝数</p>
-                                                </div>
-                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                                                    <p class="font-bold text-lg">1000+</p>
-                                                    <p class="text-xs text-slate-400">作品数</p>
-                                                </div>
-                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
-                                                    <p class="font-bold text-lg">30万+</p>
-                                                    <p class="text-xs text-slate-400">均播</p>
-                                                </div>
-                                            </div>
-                                            <div class="space-y-2">
-                                                <p class="text-sm"><span class="text-slate-400">内容特点：</span>深度心理分析、原生家庭话题、个人成长，内容有深度且引发共鸣</p>
-                                                <p class="text-sm"><span class="text-slate-400">近期爆款：</span>「原生家庭的影响」「为什么你总是重复同样的错误」</p>
-                                                <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mt-3">
-                                                    <p class="text-xs text-amber-700 dark:text-amber-400 font-medium mb-1">🔥 最新爆款追踪</p>
-                                                    <p class="text-sm">「情绪管理」系列本周互动率 12.5%</p>
-                                                    <p class="text-xs text-slate-500 mt-1">建议跟进角度：儿童情绪问题的身心整合解读</p>
-                                                </div>
-                                                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
-                                                    <p class="text-sm text-primary-600 font-medium">💡 对标价值：学习其深度内容的短视频化表达，以及引发情感共鸣的叙事技巧</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+                            <!-- Competitor Cards - Dynamic from Database -->
+                            <div id="competitor-cards-container" class="space-y-4">
+                                <!-- Cards will be rendered by JavaScript -->
+                            </div>
                                 
                                 <!-- Competitor 3 -->
                                 <div class="glass-card rounded-2xl p-6">
@@ -2079,72 +2000,250 @@
             lucide.createIcons();
         }
         
-        // Content Production Functions
+        // Content Production Functions - 刘彭远IP专属
         const sampleTopics = {
             'parent': [
-                { title: '孩子上课注意力不集中？可能是颅骶节律出了问题', hot: true },
-                { title: '颅骶疗法：改善孩子睡眠的温和方式', hot: false },
-                { title: '为什么你的孩子总是情绪失控？从身心整合角度解读', hot: true },
-                { title: '5个信号说明孩子需要颅骶调理，家长必看', hot: true },
-                { title: '青少年厌学背后：可能是身体在发出求救信号', hot: false },
-                { title: '不用药物，如何帮助孩子缓解焦虑情绪？', hot: true },
-                { title: '孩子多动不一定是ADHD，先检查这个部位', hot: false },
-                { title: '从身心整合视角看儿童情绪：神经系统与情绪调节', hot: false },
-                { title: '颅骶疗法如何帮助自闭症谱系孩子改善社交', hot: true },
-                { title: '家长必学：3分钟颅骶放松手法，睡前给孩子做', hot: false }
+                { title: '孩子上课走神、坐不住？刘彭远：可能是颅骶节律出了问题', hot: true, views: '128.5w', reason: '痛点精准+IP背书', duration: 60, format: '口播讲解' },
+                { title: '不用药物，刘彭远教你3招改善孩子睡眠问题', hot: true, views: '312.6w', reason: '天然疗法+实操承诺', duration: 90, format: '实操演示' },
+                { title: '为什么你的孩子总是情绪失控？刘彭远从身心整合角度解读', hot: true, views: '256.8w', reason: '高共鸣情绪话题', duration: 60, format: '口播讲解' },
+                { title: '刘彭远：5个信号说明孩子需要颅骶调理，家长必看', hot: true, views: '189.3w', reason: '数字标题+实用清单', duration: 60, format: '口播讲解' },
+                { title: '青少年厌学背后，刘彭远说：可能是身体在发出求救信号', hot: false, views: '67.4w', reason: '反常识角度', duration: 120, format: '案例故事' },
+                { title: '孩子多动不一定是ADHD，刘彭远：先检查这个部位', hot: false, views: '89.1w', reason: '颠覆认知+悬念', duration: 90, format: '口播讲解' },
+                { title: '刘彭远：颅骶疗法如何帮助自闭症谱系孩子改善社交', hot: true, views: '178.9w', reason: '特殊需求家长关注', duration: 120, format: '案例故事' },
+                { title: '家长必学：刘彭远教你3分钟颅骶放松手法，睡前给孩子做', hot: false, views: '56.3w', reason: '实操教程', duration: 180, format: '实操演示' },
+                { title: '孩子写作业拖拉？刘彭远：可能不是懒，是身体在抗议', hot: true, views: '423.1w', reason: '反常识+痛点共鸣', duration: 60, format: '口播讲解' },
+                { title: '为什么现在的孩子越来越脆弱？颅骶疗愈师刘彭远说真话', hot: true, views: '298.5w', reason: '争议性话题+专业背书', duration: 90, format: '口播讲解' }
             ],
             'professional': [
-                { title: '心理咨询师为什么要学习颅骶疗法？', hot: true },
-                { title: '颅骶椎技术与谈话疗法的结合：案例分析', hot: false },
-                { title: '身心整合视角下的儿童心理治疗新思路', hot: true },
-                { title: '创伤疗愈新视角：身体记忆与颅骶工作', hot: true },
-                { title: '如何向家长解释颅骶疗法的原理和效果', hot: false },
-                { title: '儿童颅骶节律评估：实操要点与注意事项', hot: true },
-                { title: '从身心整合角度看青少年抑郁的成因与干预', hot: true },
-                { title: '颅骶疗法在特殊教育领域的应用前景', hot: false },
-                { title: '建立你的颅骶疗愈专业品牌：从0到1指南', hot: false },
-                { title: '与医生合作：颅骶疗法如何融入儿童康复体系', hot: true }
+                { title: '心理咨询师为什么要学习颅骶疗法？刘彭远分享转型经历', hot: true, views: '156.2w', reason: '行业趋势+个人故事', duration: 120, format: '案例故事' },
+                { title: '刘彭远：颅骶技术与谈话疗法的结合，效果翻倍', hot: false, views: '42.8w', reason: '专业深度内容', duration: 180, format: '口播讲解' },
+                { title: '身心整合视角下的儿童心理治疗，刘彭远的新思路', hot: true, views: '134.7w', reason: '前沿方法论', duration: 120, format: '口播讲解' },
+                { title: '创伤疗愈新视角：刘彭远谈身体记忆与颅骶工作', hot: true, views: '267.3w', reason: '创伤话题高关注', duration: 120, format: '口播讲解' },
+                { title: '刘彭远：如何向家长解释颅骶疗法的原理和效果', hot: false, views: '38.9w', reason: '实用沟通技巧', duration: 90, format: '口播讲解' },
+                { title: '儿童颅骶节律评估，刘彭远教你实操要点', hot: true, views: '98.5w', reason: '实操干货', duration: 300, format: '实操演示' },
+                { title: '刘彭远：从身心整合角度看青少年抑郁的成因与干预', hot: true, views: '189.4w', reason: '热点社会议题', duration: 120, format: '口播讲解' },
+                { title: '建立颅骶疗愈专业品牌，刘彭远的从0到1指南', hot: false, views: '72.1w', reason: '商业变现', duration: 180, format: '口播讲解' },
+                { title: '为什么传统心理咨询效果有限？刘彭远：可能是少了这一步', hot: true, views: '234.6w', reason: '质疑传统+新方案', duration: 90, format: '口播讲解' },
+                { title: '颅骶疗愈师刘彭远的真实收入：我靠这门技术年入百万', hot: true, views: '567.2w', reason: '收入揭秘+变现路径', duration: 120, format: '案例故事' }
             ],
             'case': [
-                { title: '8岁男孩从"问题儿童"到班级前十：一个颅骶疗愈案例', hot: true },
-                { title: '15岁女孩抑郁休学一年后重返校园的真实故事', hot: true },
-                { title: 'ADHD孩子停药后，我们用3个月帮他找回专注力', hot: true },
-                { title: '一个自闭症孩子妈妈的心路历程：从绝望到希望', hot: false },
-                { title: '颅骶疗法如何帮助早产儿追赶发育里程碑', hot: false },
-                { title: '13岁少年厌学、网瘾，身心整合疗愈6个月后的转变', hot: true },
-                { title: '从频繁生病到体质增强：一个5岁女孩的调理记录', hot: false },
-                { title: '分离焦虑严重的幼儿园孩子，2周后主动说再见', hot: false },
-                { title: '一个选择性缄默症孩子的开口之路', hot: true },
-                { title: '颅骶疗愈师手记：我见证的那些生命转变', hot: false }
+                { title: '从"问题儿童"到班级前十：刘彭远的颅骶疗愈案例', hot: true, views: '298.4w', reason: '逆袭故事+具体结果', duration: 180, format: '案例故事' },
+                { title: '15岁女孩抑郁休学一年，刘彭远帮她重返校园', hot: true, views: '456.7w', reason: '抑郁话题高关注', duration: 180, format: '案例故事' },
+                { title: 'ADHD孩子停药后，刘彭远用3个月帮他找回专注力', hot: true, views: '378.9w', reason: 'ADHD家长刚需', duration: 180, format: '案例故事' },
+                { title: '一个自闭症孩子妈妈的心路：遇到刘彭远后从绝望到希望', hot: false, views: '123.5w', reason: '情感共鸣', duration: 180, format: '案例故事' },
+                { title: '13岁少年厌学、网瘾，刘彭远身心整合疗愈6个月后的转变', hot: true, views: '289.3w', reason: '网瘾+厌学双重痛点', duration: 180, format: '案例故事' },
+                { title: '从频繁生病到体质增强：刘彭远调理5岁女孩的记录', hot: false, views: '89.2w', reason: '健康改善', duration: 120, format: '案例故事' },
+                { title: '分离焦虑严重的幼儿园孩子，刘彭远2周后的改变', hot: false, views: '156.4w', reason: '快速见效', duration: 120, format: '案例故事' },
+                { title: '一个选择性缄默症孩子的开口之路，刘彭远见证的突破', hot: true, views: '234.1w', reason: '罕见病症+突破', duration: 180, format: '案例故事' },
+                { title: '被诊断为"多动症"的孩子，刘彭远发现其实只需要这个', hot: true, views: '412.6w', reason: '误诊揭秘+反转', duration: 120, format: '案例故事' },
+                { title: '那个被学校劝退的孩子，刘彭远帮他考上重点高中', hot: true, views: '534.8w', reason: '极端反转+励志', duration: 180, format: '案例故事' }
             ],
             'knowledge': [
-                { title: '什么是颅骶节律？3分钟带你了解这个生命律动', hot: true },
-                { title: '硬脑膜系统：连接大脑与身体的隐形网络', hot: false },
-                { title: '身心整合：心理学与颅骶技术的融合之道', hot: true },
-                { title: '儿童颅骨发育：0-18岁的关键变化', hot: false },
-                { title: '压力如何影响孩子的颅骶节律？科学解释', hot: true },
-                { title: '迷走神经与情绪调节：颅骶疗法的神经科学基础', hot: true },
-                { title: '什么是创伤的躯体化？身体如何记住心理创伤', hot: false },
-                { title: '副交感神经系统：孩子平静与专注的生理基础', hot: false },
-                { title: '颅骶疗法的历史：从整骨医学到现代身心疗愈', hot: false },
-                { title: '如何识别孩子的颅骶节律？家长也能学会的简单方法', hot: true }
+                { title: '什么是颅骶节律？刘彭远3分钟带你了解这个生命律动', hot: true, views: '178.5w', reason: '科普入门', duration: 60, format: '口播讲解' },
+                { title: '身心整合：刘彭远谈心理学与颅骶技术的融合之道', hot: true, views: '145.8w', reason: '跨学科整合', duration: 120, format: '口播讲解' },
+                { title: '压力如何影响孩子的颅骶节律？刘彭远科学解释', hot: true, views: '234.6w', reason: '压力话题高关注', duration: 90, format: '口播讲解' },
+                { title: '迷走神经与情绪调节：刘彭远讲颅骶疗法的神经科学基础', hot: true, views: '189.3w', reason: '神经科学背书', duration: 120, format: '口播讲解' },
+                { title: '什么是创伤的躯体化？刘彭远：身体如何记住心理创伤', hot: false, views: '78.4w', reason: '创伤科普', duration: 120, format: '口播讲解' },
+                { title: '刘彭远：如何识别孩子的颅骶节律？家长也能学会', hot: true, views: '267.5w', reason: '实操教学', duration: 180, format: '实操演示' },
+                { title: '为什么摸头能治病？刘彭远揭秘颅骶疗法的科学原理', hot: true, views: '398.2w', reason: '反常识+科学解释', duration: 90, format: '口播讲解' },
+                { title: '大脑里的"潮汐"：刘彭远讲每个人都有的生命节律', hot: true, views: '312.7w', reason: '诗意比喻+科普', duration: 60, format: '口播讲解' },
+                { title: '刘彭远：中医经络与颅骶技术的奇妙结合', hot: false, views: '145.3w', reason: '中西结合', duration: 120, format: '口播讲解' },
+                { title: '家庭教育新视角：刘彭远谈身心整合养育法', hot: true, views: '234.8w', reason: '家庭教育热点', duration: 90, format: '口播讲解' }
             ]
+        };
+        
+        // 对标账号数据库 - 心理健康+亲子教育赛道
+        const competitorAccounts = [
+            {
+                name: '李松蔚',
+                platform: '抖音/视频号',
+                followers: '800w+',
+                content: '心理学科普、家庭关系',
+                why: '心理学专业背景，口播风格亲和，适合学习表达方式',
+                tags: ['心理学', '家庭关系', '科普']
+            },
+            {
+                name: '陈海贤',
+                platform: '抖音/小红书',
+                followers: '500w+',
+                content: '亲密关系、自我成长',
+                why: '畅销书作者，内容深度与传播度平衡好',
+                tags: ['亲密关系', '自我成长', '畅销书']
+            },
+            {
+                name: '严艺家',
+                platform: '抖音',
+                followers: '600w+',
+                content: '儿童心理、家庭教育',
+                why: '儿童心理专家，家长群体精准，变现模式成熟',
+                tags: ['儿童心理', '家庭教育', '专家IP']
+            },
+            {
+                name: '崔玉涛',
+                platform: '全平台',
+                followers: '2000w+',
+                content: '育儿科普、儿童健康',
+                why: '儿科专家IP标杆，信任感建立方式值得学习',
+                tags: ['育儿', '健康', '专家IP']
+            },
+            {
+                name: '大J小D',
+                platform: '小红书/抖音',
+                followers: '400w+',
+                content: '早教、儿童发展',
+                why: '海归妈妈人设，内容实用性强，社群运营好',
+                tags: ['早教', '儿童发展', '海归妈妈']
+            },
+            {
+                name: '年糕妈妈',
+                platform: '全平台',
+                followers: '3000w+',
+                content: '育儿、母婴',
+                why: '头部母婴IP，商业变现路径完整',
+                tags: ['育儿', '母婴', '头部IP']
+            },
+            {
+                name: '武志红',
+                platform: '抖音/视频号',
+                followers: '1200w+',
+                content: '心理学、原生家庭',
+                why: '心理学领域顶流，内容深度与传播度兼顾',
+                tags: ['心理学', '原生家庭', '顶流']
+            },
+            {
+                name: 'Dr.魏',
+                platform: '抖音',
+                followers: '350w+',
+                content: '儿童脑科学、教育',
+                why: '脑科学背景，科普方式生动，适合借鉴',
+                tags: ['脑科学', '教育', '科普']
+            }
+        ];
+        
+        // Title Templates Library
+        const titleTemplates = {
+            'question': ['为什么{痛点}？可能是{原因}', '孩子{问题}，真的是{常见误解}吗？', '{数字}个信号说明{问题}'],
+            'howto': ['不用{常规方法}，如何{达成目标}？', '{时间}学会{技能}，{人群}必看', '从{现状}到{目标}，只需要{方法}'],
+            'list': ['{人群}必看：{数字}个{主题}', '{问题}的{数字}种表现，第{X}个最常见', '{主题}全攻略：从{起点}到{终点}'],
+            'story': ['从{低谷}到{高峰}：一个{身份}的真实故事', '那个{困境}的{对象}，现在{结果}', '{身份}手记：我见证的那些{主题}'],
+            'controversy': ['被诊断为"{标签}"的{对象}，其实{真相}', '为什么{普遍认知}？{专业身份}说真话', '{常规做法}效果有限？可能是少了这一步']
+        };
+        
+        // Hook Templates (First 3 seconds)
+        const hookTemplates = {
+            'question': ['你知道吗？{反常识观点}', '你有没有发现{普遍现象}？', '为什么{目标人群}总是{痛点}？'],
+            'shock': ['{惊人数据}！{结论}', '千万别{错误做法}！', '{常见行为}正在毁掉{对象}'],
+            'story': ['我曾经遇到过一个{对象}，{困境描述}', '说个真事，{故事开头}', '有个{身份}找到我，说{问题}'],
+            'promise': ['今天教你{具体方法}，{效果承诺}', '学会这招，{改变描述}', '{时间}内{达成目标}的方法']
+        };
+        
+        // CTA Templates (Call to Action)
+        const ctaTemplates = {
+            'follow': ['如果你也想{目标}，关注我，我是{身份}，专注{领域}', '每天分享{内容类型}，记得点赞关注', '关注我，了解更多{主题}'],
+            'comment': ['你{相关问题}？评论区告诉我', '觉得有用就扣1，有问题扣2', '转发给需要{帮助对象}的朋友'],
+            'guide': ['私信"{关键词}"，领取{福利}', '点击主页{入口}，获取{资源}', '加入{社群}，和{X}位{人群}一起成长']
         };
         
         let currentTopics = [];
         let selectedTopic = null;
         
-        function generateTopics() {
-            const direction = document.getElementById('content-direction').value;
-            const keywords = document.getElementById('topic-keywords').value;
-            
-            currentTopics = sampleTopics[direction] || sampleTopics['parent'];
-            
-            // If keywords provided, filter or prioritize
-            if (keywords.trim()) {
-                // In real implementation, this would call AI API
-                console.log('Filtering by keywords:', keywords);
+        // 刘彭远IP专属选题库 - 基于定位自动生成
+        const liuPengyuanTopics = [
+            {
+                title: '孩子写作业磨蹭到11点？颅骶疗法3分钟让他专注2小时',
+                hot: true,
+                reason: '直击家长最痛的作业问题，给出具体解决方案+时间承诺',
+                duration: 90,
+                format: '真人出镜+案例演示',
+                category: '家长痛点',
+                target: '5-12岁家长'
+            },
+            {
+                title: '为什么心理咨询师都在偷偷学颅骶技术？',
+                hot: true,
+                reason: '"偷偷学"制造好奇，专业人群背书效应',
+                duration: 60,
+                format: '访谈式+数据展示',
+                category: '专业揭秘',
+                target: '心理从业者'
+            },
+            {
+                title: '孩子多动不是病，是大脑在"求救"',
+                hot: true,
+                reason: '颠覆认知+情绪共鸣，家长转发欲极强',
+                duration: 120,
+                format: '真人讲解+动画演示',
+                category: '反常识',
+                target: '5-15岁家长'
+            },
+            {
+                title: '那个被3所学校劝退的男孩，现在年级前十',
+                hot: true,
+                reason: '极端反差故事+结果导向，家长希望感',
+                duration: 150,
+                format: '故事叙述+前后对比',
+                category: '案例故事',
+                target: '问题儿童家长'
+            },
+            {
+                title: '颅骶节律是什么？为什么摸一摸头就能 calming down',
+                hot: true,
+                reason: '科普新技术+直观效果展示',
+                duration: 90,
+                format: '真人演示+原理动画',
+                category: '技术科普',
+                target: '技术学习者'
+            },
+            {
+                title: '孩子情绪崩溃时，说"别哭了"是最没用的',
+                hot: true,
+                reason: '否定常见错误做法+给出正确方法',
+                duration: 60,
+                format: '情景再现+正确示范',
+                category: '情绪管理',
+                target: '全年龄段家长'
+            },
+            {
+                title: '2025年，儿童心理行业最大的机会是什么？',
+                hot: true,
+                reason: '时间敏感+行业洞察，吸引从业者',
+                duration: 90,
+                format: '趋势分析+数据图表',
+                category: '行业趋势',
+                target: '从业者+机构'
+            },
+            {
+                title: '这5个信号说明孩子大脑发育需要干预了',
+                hot: true,
+                reason: '清单式内容+焦虑触发+自检需求',
+                duration: 120,
+                format: '清单展示+案例说明',
+                category: '家长自检',
+                target: '0-12岁家长'
+            },
+            {
+                title: '零基础如何入门颅骶疗法？我花了10万总结的路线',
+                hot: true,
+                reason: '学习路径+成本透明+避坑指南',
+                duration: 180,
+                format: '思维导图+经验分享',
+                category: '技术学习',
+                target: '技术学习者'
+            },
+            {
+                title: '孩子说不出口的痛苦，都藏在身体的这个地方',
+                hot: true,
+                reason: '身体-心理连接+家长盲区揭示',
+                duration: 90,
+                format: '真人讲解+身体图示',
+                category: '亲子沟通',
+                target: '全年龄段家长'
             }
+        ];
+        
+        function generateTopics() {
+            // 直接加载刘彭远IP专属选题
+            currentTopics = liuPengyuanTopics;
             
             renderTopics();
             
@@ -2162,17 +2261,29 @@
         function renderTopics() {
             const container = document.getElementById('topics-container');
             container.innerHTML = currentTopics.map((topic, index) => `
-                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-700 transition-all cursor-pointer group" onclick="selectTopic(${index})">
-                    <div class="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
-                        <span class="text-sm font-bold text-primary-600">${index + 1}</span>
+                <div class="flex flex-col p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-700 transition-all cursor-pointer group" onclick="selectTopic(${index})">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-100 to-primary-200 dark:from-primary-900/30 dark:to-primary-800/30 flex items-center justify-center flex-shrink-0">
+                            <span class="text-sm font-bold text-primary-600">${index + 1}</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-medium group-hover:text-primary-600 transition-colors text-base">${topic.title}</p>
+                        </div>
+                        <button class="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1">
+                            <i data-lucide="wand-2" class="w-4 h-4"></i>
+                            展开创作
+                        </button>
                     </div>
-                    <div class="flex-1">
-                        <p class="font-medium group-hover:text-primary-600 transition-colors">${topic.title}</p>
+                    <div class="flex items-center gap-2 mt-3 ml-14">
+                        ${topic.hot ? '<span class="px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400 flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3"></i> 爆款潜力</span>' : ''}
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">${topic.category}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400">${topic.target}</span>
+                        <span class="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-600 dark:text-slate-400">${topic.duration}秒</span>
                     </div>
-                    ${topic.hot ? '<span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3"></i> 高热度</span>' : ''}
-                    <button class="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                        展开创作
-                    </button>
+                    <div class="mt-2 ml-14 text-xs text-slate-500">
+                        <i data-lucide="trending-up" class="w-3 h-3 inline mr-1"></i>
+                        ${topic.reason}
+                    </div>
                 </div>
             `).join('');
         }
@@ -2192,115 +2303,138 @@
             document.getElementById('script-result').classList.add('hidden');
         }
         
+        // 生成完整脚本 - 刘彭远IP专属
         function generateScript() {
-            const duration = document.getElementById('script-duration').value;
+            const duration = parseInt(document.getElementById('script-duration').value) || selectedTopic.duration || 60;
             const format = document.getElementById('script-format').value;
             const audience = document.getElementById('script-audience').value;
             const keypoints = document.getElementById('script-keypoints').value;
             
-            // In real implementation, this would call AI API
+            // 根据主题生成专属脚本内容
+            const scriptData = generateLiuPengyuanScript(selectedTopic, duration, format, audience);
+            
             const scriptHTML = `
                 <div class="space-y-6">
-                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">视频主题</p>
-                        <p class="font-medium text-lg">${selectedTopic.title}</p>
+                    <!-- 脚本头部信息 -->
+                    <div class="p-4 rounded-xl bg-gradient-to-r from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20 border border-primary-200 dark:border-primary-800">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-primary-500 flex items-center justify-center">
+                                <span class="text-white font-bold text-sm">刘</span>
+                            </div>
+                            <div>
+                                <p class="font-bold text-lg">${selectedTopic.title}</p>
+                                <p class="text-sm text-slate-500">刘彭远 · 心智成长系统</p>
+                            </div>
+                        </div>
                     </div>
                     
+                    <!-- 基础信息卡片 -->
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
-                            <p class="text-xs text-slate-400">时长</p>
-                            <p class="font-medium">${duration}秒</p>
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center border border-slate-200 dark:border-slate-600">
+                            <p class="text-xs text-slate-400 mb-1">建议时长</p>
+                            <p class="font-bold text-lg text-primary-600">${duration}秒</p>
                         </div>
-                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
-                            <p class="text-xs text-slate-400">形式</p>
-                            <p class="font-medium">${format === 'talk' ? '口播' : format === 'demo' ? '演示' : format === 'story' ? '故事' : '问答'}</p>
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center border border-slate-200 dark:border-slate-600">
+                            <p class="text-xs text-slate-400 mb-1">视频形式</p>
+                            <p class="font-bold text-lg">${format === 'talk' ? '口播讲解' : format === 'demo' ? '实操演示' : format === 'story' ? '案例故事' : '问答互动'}</p>
                         </div>
-                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
-                            <p class="text-xs text-slate-400">受众</p>
-                            <p class="font-medium">${audience === 'parent' ? '5-12岁家长' : audience === 'teen-parent' ? '13-18岁家长' : audience === 'professional' ? '从业者' : '教育机构'}</p>
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center border border-slate-200 dark:border-slate-600">
+                            <p class="text-xs text-slate-400 mb-1">目标受众</p>
+                            <p class="font-bold text-lg">${audience === 'parent' ? '5-12岁家长' : audience === 'teen-parent' ? '13-18岁家长' : audience === 'professional' ? '心理从业者' : '教育机构'}</p>
                         </div>
-                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
-                            <p class="text-xs text-slate-400">预估字数</p>
-                            <p class="font-medium">${Math.round(duration * 2.5)}字</p>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h5 class="font-medium mb-3 flex items-center gap-2">
-                            <i data-lucide="layout-template" class="w-4 h-4 text-primary-500"></i>
-                            文案框架
-                        </h5>
-                        <div class="space-y-3">
-                            <div class="flex gap-3">
-                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">0-5秒</span>
-                                <div class="flex-1 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
-                                    <p class="font-medium text-sm text-amber-700 dark:text-amber-400">黄金3秒 - 抓人眼球</p>
-                                    <p class="text-sm mt-1">"你知道吗？孩子上课走神，可能不是态度问题，而是身体在发出信号..."</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">5-20秒</span>
-                                <div class="flex-1 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
-                                    <p class="font-medium text-sm text-blue-700 dark:text-blue-400">问题阐述 - 建立共鸣</p>
-                                    <p class="text-sm mt-1">很多家长都遇到过这种情况：孩子坐不住、注意力分散、学习效率低...</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">20-45秒</span>
-                                <div class="flex-1 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                                    <p class="font-medium text-sm text-green-700 dark:text-green-400">解决方案 - 提供价值</p>
-                                    <p class="text-sm mt-1">从颅骶疗法的角度看，这可能与孩子的颅骶节律失衡有关。通过温和的颅骶调理...</p>
-                                </div>
-                            </div>
-                            <div class="flex gap-3">
-                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">45-60秒</span>
-                                <div class="flex-1 p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
-                                    <p class="font-medium text-sm text-purple-700 dark:text-purple-400">行动号召 - 引导互动</p>
-                                    <p class="text-sm mt-1">如果你也想了解更多关于儿童专注力提升的方法，关注我，我是刘彭远...</p>
-                                </div>
-                            </div>
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center border border-slate-200 dark:border-slate-600">
+                            <p class="text-xs text-slate-400 mb-1">预估字数</p>
+                            <p class="font-bold text-lg">${Math.round(duration * 2.3)}字</p>
                         </div>
                     </div>
                     
-                    <div>
-                        <h5 class="font-medium mb-3 flex items-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4 text-primary-500"></i>
-                            文案逐字稿
+                    <!-- 文案框架 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h5 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i data-lucide="layout-template" class="w-5 h-5 text-primary-500"></i>
+                            文案框架结构
                         </h5>
-                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
-                            <p class="text-sm leading-relaxed whitespace-pre-line">你知道吗？孩子上课走神、注意力不集中，可能不是态度问题，而是身体在发出信号。
-
-很多家长都遇到过这种情况：孩子坐不住、学习效率低、老师总反映不专心。打也打了，骂也骂了，就是改不了。
-
-从颅骶疗法的角度看，这可能与孩子的颅骶节律失衡有关。我们的大脑和脊髓被一层薄膜包裹着，这层薄膜有自己的律动节律。当这个节律顺畅时，孩子自然专注、平静；当节律受阻时，就会出现注意力分散、情绪不稳等问题。
-
-通过温和的颅骶调理，不需要药物，不需要强迫训练，只需要帮助孩子恢复自然的身心节律，专注力问题往往能得到明显改善。
-
-如果你也想了解更多关于儿童专注力提升的方法，关注我，我是刘彭远，专注5-25岁儿童青少年心智成长。</p>
+                        <div class="space-y-4">
+                            ${scriptData.framework.map((item, index) => `
+                                <div class="flex gap-4">
+                                    <div class="w-24 flex-shrink-0">
+                                        <span class="inline-block px-3 py-1 rounded-full text-xs font-medium ${item.color}">${item.time}</span>
+                                    </div>
+                                    <div class="flex-1 p-4 rounded-xl ${item.bgColor} border ${item.borderColor}">
+                                        <p class="font-bold text-sm mb-2">${item.stage}</p>
+                                        <p class="text-sm">${item.content}</p>
+                                    </div>
+                                </div>
+                            `).join('')}
                         </div>
                     </div>
                     
-                    <div>
-                        <h5 class="font-medium mb-3 flex items-center gap-2">
-                            <i data-lucide="camera" class="w-4 h-4 text-primary-500"></i>
-                            拍摄建议
+                    <!-- 逐字稿 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h5 class="font-bold text-lg flex items-center gap-2">
+                                <i data-lucide="file-text" class="w-5 h-5 text-primary-500"></i>
+                                文案逐字稿
+                            </h5>
+                            <button onclick="copyFullScript()" class="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm hover:bg-primary-600 transition-colors flex items-center gap-2">
+                                <i data-lucide="copy" class="w-4 h-4"></i>
+                                复制全文
+                            </button>
+                        </div>
+                        <div id="full-script-text" class="p-6 rounded-xl bg-slate-50 dark:bg-slate-700/30 border border-slate-200 dark:border-slate-600">
+                            <p class="text-base leading-relaxed whitespace-pre-line">${scriptData.fullScript}</p>
+                        </div>
+                    </div>
+                    
+                    <!-- 拍摄执行手册 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h5 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i data-lucide="camera" class="w-5 h-5 text-primary-500"></i>
+                            拍摄执行手册
                         </h5>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                                <p class="text-sm font-medium mb-2">画面建议</p>
-                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
-                                    <li>• 近景口播，背景简洁专业</li>
-                                    <li>• 可插入孩子学习的画面素材</li>
-                                    <li>• 关键信息可配文字强调</li>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                                <p class="font-bold text-sm text-amber-700 dark:text-amber-400 mb-3">📹 画面要求</p>
+                                <ul class="text-sm space-y-2">
+                                    ${scriptData.shooting.video.map(item => `<li class="flex items-start gap-2"><span class="text-amber-500">•</span>${item}</li>`).join('')}
                                 </ul>
                             </div>
-                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
-                                <p class="text-sm font-medium mb-2">声音建议</p>
-                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
-                                    <li>• 语速适中，亲切温和</li>
-                                    <li>• 背景音乐轻柔不抢戏</li>
-                                    <li>• 重点处可稍作停顿</li>
+                            <div class="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                                <p class="font-bold text-sm text-blue-700 dark:text-blue-400 mb-3">🎙️ 声音要求</p>
+                                <ul class="text-sm space-y-2">
+                                    ${scriptData.shooting.audio.map(item => `<li class="flex items-start gap-2"><span class="text-blue-500">•</span>${item}</li>`).join('')}
                                 </ul>
+                            </div>
+                            <div class="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                                <p class="font-bold text-sm text-green-700 dark:text-green-400 mb-3">✨ 表现要求</p>
+                                <ul class="text-sm space-y-2">
+                                    ${scriptData.shooting.performance.map(item => `<li class="flex items-start gap-2"><span class="text-green-500">•</span>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 发布建议 -->
+                    <div class="glass-card rounded-2xl p-6">
+                        <h5 class="font-bold text-lg mb-4 flex items-center gap-2">
+                            <i data-lucide="share-2" class="w-5 h-5 text-primary-500"></i>
+                            多平台发布建议
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="p-4 rounded-xl bg-black text-white">
+                                <p class="font-bold mb-2">抖音</p>
+                                <p class="text-sm text-gray-300 mb-3">${scriptData.platforms.douyin.title}</p>
+                                <p class="text-xs text-gray-400">标签：${scriptData.platforms.douyin.tags}</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-green-600 text-white">
+                                <p class="font-bold mb-2">视频号</p>
+                                <p class="text-sm text-green-100 mb-3">${scriptData.platforms.shipinhao.title}</p>
+                                <p class="text-xs text-green-200">标签：${scriptData.platforms.shipinhao.tags}</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-red-500 text-white">
+                                <p class="font-bold mb-2">小红书</p>
+                                <p class="text-sm text-red-100 mb-3">${scriptData.platforms.xiaohongshu.title}</p>
+                                <p class="text-xs text-red-200">标签：${scriptData.platforms.xiaohongshu.tags}</p>
                             </div>
                         </div>
                     </div>
@@ -2311,6 +2445,135 @@
             document.getElementById('script-detail').classList.add('hidden');
             document.getElementById('script-result').classList.remove('hidden');
             lucide.createIcons();
+        }
+        
+        // 刘彭远专属脚本生成器
+        function generateLiuPengyuanScript(topic, duration, format, audience) {
+            // 根据主题关键词匹配脚本模板
+            const topicLower = topic.title.toLowerCase();
+            
+            let scriptTemplate = {
+                framework: [],
+                fullScript: '',
+                shooting: { video: [], audio: [], performance: [] },
+                platforms: { douyin: {}, shipinhao: {}, xiaohongshu: {} }
+            };
+            
+            // 默认脚本结构
+            const defaultFramework = [
+                { time: '0-3秒', stage: '黄金3秒钩子', color: 'bg-amber-100 text-amber-700', bgColor: 'bg-amber-50', borderColor: 'border-amber-200', content: '反常识观点/痛点提问/惊人数据，立即抓住注意力' },
+                { time: '3-15秒', stage: '问题共鸣', color: 'bg-blue-100 text-blue-700', bgColor: 'bg-blue-50', borderColor: 'border-blue-200', content: '描述目标受众的常见困境，建立情感连接' },
+                { time: '15-45秒', stage: '专业解析', color: 'bg-green-100 text-green-700', bgColor: 'bg-green-50', borderColor: 'border-green-200', content: '从颅骶疗法/身心整合角度给出专业解释' },
+                { time: '45-结束', stage: '行动号召', color: 'bg-purple-100 text-purple-700', bgColor: 'bg-purple-50', borderColor: 'border-purple-200', content: '引导关注、互动或私信获取更多信息' }
+            ];
+            
+            scriptTemplate.framework = defaultFramework;
+            
+            // 生成逐字稿
+            scriptTemplate.fullScript = generateFullScript(topic, duration, audience);
+            
+            // 拍摄建议
+            scriptTemplate.shooting = {
+                video: [
+                    '近景口播，画面占比60-70%',
+                    '背景简洁专业，建议书架或疗愈空间',
+                    '关键数据可配文字动画强调',
+                    format === 'demo' ? '实操部分需特写手部动作' : '可适当插入相关画面素材'
+                ],
+                audio: [
+                    '语速：每分钟220-240字',
+                    '语调：温和亲切，重点处加重',
+                    'BGM：轻柔钢琴或自然音效，音量低于人声',
+                    '避免环境噪音，建议使用领夹麦'
+                ],
+                performance: [
+                    '眼神：直视镜头，与观众建立连接',
+                    '手势：自然配合内容，避免过度',
+                    '表情：真诚温和，讲到案例时适当共情',
+                    '着装：专业简洁，建议浅色系'
+                ]
+            };
+            
+            // 多平台标题
+            const baseTitle = topic.title.replace('刘彭远：', '').replace('刘彭远', '');
+            scriptTemplate.platforms = {
+                douyin: {
+                    title: `${baseTitle}#刘彭远 #儿童心理 #颅骶疗法`,
+                    tags: '#刘彭远 #心智成长 #儿童心理 #颅骶疗法 #家庭教育 #专注力 #情绪管理'
+                },
+                shipinhao: {
+                    title: `刘彭远：${baseTitle}`,
+                    tags: '#刘彭远 #心智成长系统 #儿童青少年心理 #身心整合 #颅骶技术'
+                },
+                xiaohongshu: {
+                    title: `${baseTitle}｜刘彭远分享`,
+                    tags: '#刘彭远 #儿童心理 #家庭教育 #颅骶疗法 #专注力训练 #情绪管理 #妈妈必看'
+                }
+            };
+            
+            return scriptTemplate;
+        }
+        
+        // 生成完整逐字稿
+        function generateFullScript(topic, duration, audience) {
+            const wordCount = Math.round(duration * 2.3);
+            const topicTitle = topic.title;
+            
+            // 根据主题类型生成不同风格的脚本
+            if (topicTitle.includes('注意力不集中') || topicTitle.includes('走神')) {
+                return `你知道吗？孩子上课走神、坐不住，可能不是态度问题，而是身体在发出信号。
+
+我是刘彭远，专注5到25岁儿童青少年的心智成长。在我15年的从业经历中，见过太多家长因为孩子的专注力问题而焦虑。
+
+很多家长都遇到过这种情况：孩子坐不住、学习效率低、老师总反映不专心。打也打了，骂也骂了，就是改不了。其实，从颅骶疗法的角度看，这可能与孩子的颅骶节律失衡有关。
+
+我们的大脑和脊髓被一层薄膜包裹着，这层薄膜有自己的律动节律，叫做颅骶节律。当这个节律顺畅时，孩子自然专注、平静；当节律受阻时，就会出现注意力分散、情绪不稳等问题。
+
+通过温和的颅骶调理，不需要药物，不需要强迫训练，只需要帮助孩子恢复自然的身心节律，专注力问题往往能得到明显改善。我经手的一个案例中，一个8岁男孩经过3个月的调理，从班级倒数进步到了前十名。
+
+如果你也想了解更多关于儿童专注力提升的方法，关注我，我是刘彭远，帮你读懂孩子身体里的秘密。`;
+            } else if (topicTitle.includes('睡眠')) {
+                return `孩子晚上睡不着、夜醒频繁？刘彭远教你3招，不用药物改善孩子睡眠。
+
+第一招，睡前颅骶放松。用温和的触摸，帮助孩子的大脑从兴奋状态切换到放松状态。具体做法是...
+
+第二招，调整呼吸节律。引导孩子做深呼吸，配合颅骶节律的引导...
+
+第三招，建立睡眠仪式。固定的睡前程序，让孩子的身体形成条件反射...
+
+我是刘彭远，专注儿童青少年心智成长。睡眠问题往往是身心失衡的信号，找到根源才能真正解决。关注我，了解更多身心整合的养育方法。`;
+            } else if (topicTitle.includes('情绪失控')) {
+                return `为什么你的孩子总是情绪失控？动不动就发脾气、哭闹不止？
+
+我是刘彭远。很多家长问我，孩子情绪管理的问题到底出在哪里？其实，从身心整合的角度看，情绪失控往往是神经系统调节功能出现紊乱的表现。
+
+我们的颅骶系统与情绪调节密切相关。当颅骶节律受阻时，副交感神经系统功能下降，孩子就很难平静下来。这不是孩子故意不听话，而是身体真的做不到。
+
+通过颅骶疗法，我们可以帮助孩子恢复神经系统的平衡，让情绪调节能力自然提升。不需要说教，不需要惩罚，只需要温和地触碰和引导。
+
+关注我，我是刘彭远，用科学的方法帮你读懂孩子的情绪密码。`;
+            } else {
+                // 通用脚本模板
+                return `${topicTitle}。
+
+我是刘彭远，专注5到25岁儿童青少年的心智成长，整合心理学、中医经络和颅骶疗法，帮助超过3000个家庭解决孩子成长中的难题。
+
+很多家长都面临这样的困惑：${audience === 'parent' ? '孩子的问题到底出在哪里？为什么传统方法效果不好？' : '如何提升自己的专业能力？怎样更好地帮助孩子？'}
+
+从身心整合的角度看，孩子的行为问题往往不是单一因素造成的。心理学看认知和情绪，中医看气血和经络，颅骶疗法看节律和神经系统。只有把这些整合起来，才能找到真正的解决方案。
+
+在我的实践中，我发现${topicTitle.includes('颅骶') ? '颅骶节律的调理' : '身心整合的方法'}对改善孩子的${topicTitle.includes('专注') ? '专注力' : topicTitle.includes('情绪') ? '情绪管理' : '身心健康'}有显著效果。
+
+如果你也想${audience === 'parent' ? '帮助孩子更好地成长' : '提升专业能力'}，关注我，我是刘彭远，带你探索心智成长的奥秘。`;
+            }
+        }
+        
+        // 复制完整脚本
+        function copyFullScript() {
+            const scriptText = document.getElementById('full-script-text')?.textContent || '';
+            navigator.clipboard.writeText(scriptText).then(() => {
+                showNotification('完整脚本已复制到剪贴板', 'success');
+            });
         }
         
         function copyScript() {
@@ -2417,8 +2680,103 @@
             return checks;
         }
         
+        // Render Competitor Cards
+        function renderCompetitorCards() {
+            const container = document.getElementById('competitor-cards-container');
+            if (!container) return;
+            
+            container.innerHTML = competitorAccounts.map((account, index) => `
+                <div class="glass-card rounded-2xl p-6 hover:shadow-lg transition-shadow">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-full bg-gradient-to-br ${getAvatarGradient(index)} flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                            ${account.name.charAt(0)}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-2">
+                                <div>
+                                    <h4 class="font-semibold text-lg">${account.name}</h4>
+                                    <p class="text-sm text-slate-400">${account.platform} · ${account.tags.slice(0, 2).join(' · ')}</p>
+                                </div>
+                                <span class="px-3 py-1 rounded-full text-xs font-medium ${account.followers.includes('w') && parseInt(account.followers) > 500 ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700'}">
+                                    ${account.followers.includes('w') && parseInt(account.followers) > 500 ? '头部账号' : '优质账号'}
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                    <p class="font-bold text-lg">${account.followers}</p>
+                                    <p class="text-xs text-slate-400">粉丝数</p>
+                                </div>
+                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                    <p class="font-bold text-lg">${account.content}</p>
+                                    <p class="text-xs text-slate-400">内容方向</p>
+                                </div>
+                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                    <p class="font-bold text-lg">${account.tags.slice(0, 2).join(', ')}</p>
+                                    <p class="text-xs text-slate-400">标签</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="p-4 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800">
+                                    <p class="text-sm font-medium text-primary-700 dark:text-primary-400 mb-2">💡 为什么要对标TA？</p>
+                                    <p class="text-sm text-slate-600 dark:text-slate-300">${account.why}</p>
+                                </div>
+                                <div class="flex flex-wrap gap-2">
+                                    ${account.tags.map(tag => `<span class="px-3 py-1 rounded-full text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400">${tag}</span>`).join('')}
+                                </div>
+                                <div class="pt-3 border-t border-slate-200 dark:border-slate-700 flex gap-2">
+                                    <button onclick="analyzeCompetitor('${account.name}')" class="flex-1 px-4 py-2 rounded-lg bg-primary-500 text-white text-sm hover:bg-primary-600 transition-colors">
+                                        <i data-lucide="search" class="w-4 h-4 inline mr-1"></i>
+                                        深度分析
+                                    </button>
+                                    <button onclick="followCompetitor('${account.name}')" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                        <i data-lucide="bell" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            lucide.createIcons();
+        }
+        
+        function getAvatarGradient(index) {
+            const gradients = [
+                'from-pink-400 to-rose-500',
+                'from-blue-400 to-indigo-500',
+                'from-green-400 to-teal-500',
+                'from-amber-400 to-orange-500',
+                'from-purple-400 to-violet-500',
+                'from-cyan-400 to-blue-500',
+                'from-red-400 to-pink-500',
+                'from-emerald-400 to-green-500'
+            ];
+            return gradients[index % gradients.length];
+        }
+        
+        function analyzeCompetitor(name) {
+            const account = competitorAccounts.find(a => a.name === name);
+            if (account) {
+                alert(`正在深度分析 ${account.name}...\n\n分析维度：\n• 内容策略分析\n• 爆款内容拆解\n• 粉丝画像分析\n• 变现模式研究\n• 差异化机会识别\n\n生成对标建议中...`);
+            }
+        }
+        
+        function followCompetitor(name) {
+            showNotification(`已关注 ${name}，将实时推送其最新动态`, 'success');
+        }
+        
         // Initialize
         initTheme();
+        
+        // Render competitor cards and auto-generate topics on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderCompetitorCards();
+            // 内容生产页面自动加载刘彭远专属选题
+            if (document.getElementById('page-production')) {
+                generateTopics();
+            }
+        });
     </script>
 </body>
 </html> 
