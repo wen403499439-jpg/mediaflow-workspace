@@ -1,0 +1,2424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediaFlow - 自媒体运营工作台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            200: '#99f6e4',
+                            300: '#5eead4',
+                            400: '#2dd4bf',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0f766e',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        },
+                        slate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            400: '#94a3b8',
+                            500: '#64748b',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .nav-item {
+            transition: all 0.2s ease;
+        }
+        
+        .nav-item:hover {
+            background: rgba(20, 184, 166, 0.1);
+            color: #0d9488;
+        }
+        
+        .nav-item.active {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(20, 184, 166, 0.4);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .dark .card-hover:hover {
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(248,250,252,0.9) 100%);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+        
+        .dark .stat-card {
+            background: linear-gradient(135deg, rgba(30,41,59,0.9) 0%, rgba(15,23,42,0.9) 100%);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(20, 184, 166, 0.4);
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #14b8a6 0%, #2dd4bf 100%);
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+        
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #64748b;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-900 dark:text-slate-100 transition-colors duration-300">
+    <div id="app" class="min-h-screen flex">
+        <!-- Sidebar -->
+        <aside id="sidebar" class="fixed left-0 top-0 h-full w-64 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 z-50 transition-transform duration-300 lg:translate-x-0 -translate-x-full">
+            <!-- Logo -->
+            <div class="h-16 flex items-center px-6 border-b border-slate-200 dark:border-slate-700">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/30">
+                        <i data-lucide="zap" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg tracking-tight">MediaFlow</h1>
+                        <p class="text-xs text-slate-400">自媒体运营工作台</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="p-4 space-y-1">
+                <button onclick="switchPage('dashboard')" class="nav-item active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium" data-page="dashboard">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span>工作台</span>
+                </button>
+                
+                <button onclick="switchPage('positioning')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400" data-page="positioning">
+                    <i data-lucide="target" class="w-5 h-5"></i>
+                    <span>账号定位</span>
+                </button>
+                
+                <button onclick="switchPage('content')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400" data-page="content">
+                    <i data-lucide="lightbulb" class="w-5 h-5"></i>
+                    <span>内容策划</span>
+                </button>
+                
+                <button onclick="switchPage('production')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400" data-page="production">
+                    <i data-lucide="pen-tool" class="w-5 h-5"></i>
+                    <span>内容生产</span>
+                </button>
+                
+                <button onclick="switchPage('publish')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400" data-page="publish">
+                    <i data-lucide="rocket" class="w-5 h-5"></i>
+                    <span>发布辅助</span>
+                </button>
+                
+                <button onclick="switchPage('competitor')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400" data-page="competitor">
+                    <i data-lucide="users-2" class="w-5 h-5"></i>
+                    <span>对标账号</span>
+                </button>
+                
+                <button onclick="switchPage('xiaohongshu')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400" data-page="xiaohongshu">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span>小红书图文</span>
+                    <span class="ml-auto px-2 py-0.5 rounded-full text-xs bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400">员工</span>
+                </button>
+                
+                <button onclick="switchPage('analytics')" class="nav-item w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400" data-page="analytics">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span>数据复盘</span>
+                </button>
+            </nav>
+            
+            <!-- Bottom Actions -->
+            <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-200 dark:border-slate-700">
+                <button onclick="toggleTheme()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <i data-lucide="sun" class="w-5 h-5 dark:hidden"></i>
+                    <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+                    <span class="dark:hidden">切换深色</span>
+                    <span class="hidden dark:block">切换浅色</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 lg:ml-64 min-h-screen">
+            <!-- Header -->
+            <header class="h-16 bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40">
+                <div class="h-full px-6 flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                            <i data-lucide="menu" class="w-5 h-5"></i>
+                        </button>
+                        <h2 id="page-title" class="text-xl font-semibold">工作台</h2>
+                    </div>
+                    
+                    <div class="flex items-center gap-4">
+                        <button class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 relative">
+                            <i data-lucide="bell" class="w-5 h-5"></i>
+                            <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+                        </button>
+                        <div class="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-700">
+                            <div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center text-white font-medium text-sm">
+                                用
+                            </div>
+                            <div class="hidden sm:block">
+                                <p class="text-sm font-medium">用户名</p>
+                                <p class="text-xs text-slate-400">运营专员</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- Page Content -->
+            <div id="page-content" class="p-6">
+                <!-- Dashboard Page -->
+                <div id="page-dashboard" class="page-section animate-fade-in">
+                    <!-- Welcome Banner -->
+                    <div class="mb-8 p-6 rounded-2xl bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-xl shadow-primary-500/20">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <div class="flex items-center gap-3 mb-2">
+                                    <h3 class="text-2xl font-bold">刘彭远 · 心智成长系统</h3>
+                                    <span class="px-2 py-1 rounded-lg bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-xs font-bold flex items-center gap-1 shadow-lg">
+                                        <i data-lucide="badge-check" class="w-3 h-3"></i>
+                                        黄V认证
+                                    </span>
+                                </div>
+                                <p class="text-primary-100">心理学 × 颅骶椎技术融合 | 身心整合疗愈 | 专注5-25岁儿童青少年心智成长</p>
+                                <div class="flex items-center gap-4 mt-3 text-sm text-primary-100">
+                                    <span class="flex items-center gap-1"><i data-lucide="shield-check" class="w-4 h-4"></i> 平台认证专家</span>
+                                    <span class="flex items-center gap-1"><i data-lucide="award" class="w-4 h-4"></i> 专业内容创作者</span>
+                                </div>
+                            </div>
+                            <div class="hidden md:block">
+                                <i data-lucide="brain" class="w-16 h-16 text-white/30"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hot Content Alert Banner -->
+                    <div class="mb-6 p-4 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white shadow-lg shadow-amber-500/20 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+                                <i data-lucide="trending-up" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium">实时热点追踪</p>
+                                <p class="text-sm text-white/80">「儿童专注力」话题今日热度 +128%，建议跟进创作</p>
+                            </div>
+                        </div>
+                        <button onclick="switchPage('competitor')" class="px-4 py-2 rounded-lg bg-white text-amber-600 text-sm font-medium hover:bg-white/90 transition-colors">
+                            查看详情
+                        </button>
+                    </div>
+                    
+                    <!-- Platform Stats Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <!-- Douyin -->
+                        <div class="glass-card rounded-2xl p-6 card-hover border-t-4 border-t-black dark:border-t-white">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-black dark:bg-white flex items-center justify-center">
+                                        <span class="text-white dark:text-black font-bold text-xs">抖音</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">抖音</p>
+                                        <p class="text-xs text-slate-400">@刘彭远心智成长</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-medium text-green-500 flex items-center gap-1">
+                                    <i data-lucide="trending-up" class="w-3 h-3"></i> +18.5%
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">5.2万</p>
+                                    <p class="text-xs text-slate-400">粉丝</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">128万</p>
+                                    <p class="text-xs text-slate-400">播放量</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">4.8%</p>
+                                    <p class="text-xs text-slate-400">互动率</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Video Channel -->
+                        <div class="glass-card rounded-2xl p-6 card-hover border-t-4 border-t-green-500">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-green-500 flex items-center justify-center">
+                                        <i data-lucide="play-circle" class="w-5 h-5 text-white"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">视频号</p>
+                                        <p class="text-xs text-slate-400">@刘彭远</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-medium text-green-500 flex items-center gap-1">
+                                    <i data-lucide="trending-up" class="w-3 h-3"></i> +25.3%
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">3.8万</p>
+                                    <p class="text-xs text-slate-400">粉丝</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">86万</p>
+                                    <p class="text-xs text-slate-400">播放量</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">6.2%</p>
+                                    <p class="text-xs text-slate-400">互动率</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Xiaohongshu -->
+                        <div class="glass-card rounded-2xl p-6 card-hover border-t-4 border-t-red-500">
+                            <div class="flex items-center justify-between mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center">
+                                        <span class="text-white font-bold text-xs">小红书</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold">小红书</p>
+                                        <p class="text-xs text-slate-400">@刘彭远</p>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-medium text-green-500 flex items-center gap-1">
+                                    <i data-lucide="trending-up" class="w-3 h-3"></i> +32.1%
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4">
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">2.1万</p>
+                                    <p class="text-xs text-slate-400">粉丝</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">45万</p>
+                                    <p class="text-xs text-slate-400">曝光</p>
+                                </div>
+                                <div class="text-center">
+                                    <p class="text-xl font-bold">8.5%</p>
+                                    <p class="text-xs text-slate-400">收藏率</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Cross-Platform Content Status -->
+                    <div class="glass-card rounded-2xl p-6 mb-8">
+                        <div class="flex items-center justify-between mb-6">
+                            <h4 class="font-semibold text-lg flex items-center gap-2">
+                                <i data-lucide="share-2" class="w-5 h-5 text-primary-500"></i>
+                                跨平台内容分发状态
+                            </h4>
+                            <button class="text-sm text-primary-600 hover:text-primary-700 font-medium">查看全部</button>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                <div class="w-12 h-12 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                                    <i data-lucide="video" class="w-6 h-6 text-primary-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">「颅骶疗法改善孩子专注力」</p>
+                                    <p class="text-sm text-slate-400">主视频时长：58秒 · 录制完成时间：4月18日 10:30</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-black text-white dark:bg-white dark:text-black">抖音 ✓</span>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-500 text-white">视频号 ✓</span>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400">小红书 —</span>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                <div class="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                    <i data-lucide="video" class="w-6 h-6 text-blue-600"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <p class="font-medium">「身心整合视角：儿童情绪问题的深层解读」</p>
+                                    <p class="text-sm text-slate-400">主视频时长：72秒 · 录制完成时间：4月17日 15:20</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-black text-white dark:bg-white dark:text-black">抖音 ✓</span>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-500 text-white">视频号 ✓</span>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-red-500 text-white">小红书 ✓</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Main Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Today's Tasks -->
+                        <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="font-semibold text-lg">今日任务</h4>
+                                <button class="text-sm text-primary-600 hover:text-primary-700 font-medium">查看全部</button>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                    <div class="w-10 h-10 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                                        <i data-lucide="video" class="w-5 h-5 text-primary-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">拍摄短视频：「颅骶疗法如何改善孩子专注力」</p>
+                                        <p class="text-sm text-slate-400">预计耗时 2 小时 · 目标受众：5-12岁家长</p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">进行中</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                    <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                        <i data-lucide="edit-3" class="w-5 h-5 text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">撰写图文：「颅骶节律与儿童专注力：家长必读」</p>
+                                        <p class="text-sm text-slate-400">预计耗时 1.5 小时 · 目标受众：心理从业者</p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">待开始</span>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                    <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                        <i data-lucide="message-circle" class="w-5 h-5 text-purple-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">回复家长咨询私信（颅骶疗法课程）</p>
+                                        <p class="text-sm text-slate-400">预计耗时 45 分钟 · 3条待回复</p>
+                                    </div>
+                                    <span class="px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">待开始</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Content Calendar Preview -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="font-semibold text-lg">内容日历</h4>
+                                <button class="text-sm text-primary-600 hover:text-primary-700 font-medium">打开日历</button>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-14 rounded-lg bg-primary-500 text-white flex flex-col items-center justify-center text-center">
+                                        <span class="text-xs">4月</span>
+                                        <span class="text-lg font-bold">18</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-sm">今天</p>
+                                        <p class="text-xs text-slate-400">3 条内容待发布</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-14 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex flex-col items-center justify-center text-center">
+                                        <span class="text-xs">4月</span>
+                                        <span class="text-lg font-bold">19</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-sm">明天</p>
+                                        <p class="text-xs text-slate-400">2 条内容计划中</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-14 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 flex flex-col items-center justify-center text-center">
+                                        <span class="text-xs">4月</span>
+                                        <span class="text-lg font-bold">20</span>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium text-sm">周日</p>
+                                        <p class="text-xs text-slate-400">1 条内容计划中</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <button class="w-full mt-6 py-3 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-600 text-slate-500 hover:border-primary-400 hover:text-primary-600 transition-colors flex items-center justify-center gap-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span class="text-sm font-medium">新建内容计划</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Positioning Page -->
+                <div id="page-positioning" class="page-section hidden animate-fade-in">
+                    <div class="max-w-4xl mx-auto">
+                        <div class="text-center mb-10">
+                            <h3 class="text-2xl font-bold mb-3">账号定位 & 人设策划</h3>
+                            <p class="text-slate-500 dark:text-slate-400">明确你的赛道、受众和差异化优势，打造独特的个人品牌</p>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <div class="glass-card rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showPositioningForm('niche')">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-primary-400 to-primary-600 flex items-center justify-center shadow-lg shadow-primary-500/30">
+                                    <i data-lucide="compass" class="w-8 h-8 text-white"></i>
+                                </div>
+                                <h4 class="font-semibold mb-2">赛道分析</h4>
+                                <p class="text-sm text-slate-400">选择垂直领域，分析市场机会</p>
+                            </div>
+                            
+                            <div class="glass-card rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showPositioningForm('persona')">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                                    <i data-lucide="user" class="w-8 h-8 text-white"></i>
+                                </div>
+                                <h4 class="font-semibold mb-2">人设画像</h4>
+                                <p class="text-sm text-slate-400">定义你的角色、风格和价值观</p>
+                            </div>
+                            
+                            <div class="glass-card rounded-2xl p-6 text-center card-hover cursor-pointer" onclick="showPositioningForm('competitor')">
+                                <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center shadow-lg shadow-purple-500/30">
+                                    <i data-lucide="users-2" class="w-8 h-8 text-white"></i>
+                                </div>
+                                <h4 class="font-semibold mb-2">竞品对标</h4>
+                                <p class="text-sm text-slate-400">分析同类账号，找到差异化</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Positioning Form -->
+                        <div class="glass-card rounded-2xl p-8">
+                            <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                                <i data-lucide="target" class="w-5 h-5 text-primary-500"></i>
+                                刘彭远 · 心智成长系统定位
+                            </h4>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">IP名称</label>
+                                    <div class="flex items-center gap-3">
+                                        <input type="text" value="刘彭远" class="flex-1 px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                        <span class="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-400 to-yellow-500 text-white text-sm font-bold flex items-center gap-1 shadow-lg shadow-amber-500/30">
+                                            <i data-lucide="badge-check" class="w-4 h-4"></i>
+                                            黄V认证
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">核心定位</label>
+                                    <input type="text" value="心智成长架构师 | 身心整合疗愈专家 | 心理学×颅骶椎技术融合开创者" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                </div>
+                                
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">核心技术体系</label>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">发展心理学</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">颅骶椎疗法</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">身心整合技术</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">服务人群</label>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">5-25岁家长</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">心理从业者</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">教育机构</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">核心领域</label>
+                                        <div class="space-y-2">
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">家庭教育</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">心理咨询</span>
+                                            </label>
+                                            <label class="flex items-center gap-2">
+                                                <input type="checkbox" checked class="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                                <span class="text-sm">儿童青少年</span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">目标受众画像</label>
+                                    <textarea rows="4" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none">【家长群体】5-25岁儿童青少年的父母，关注孩子心理健康、学习能力、情绪管理，寻求科学、温和的非药物干预方式
+
+【心理从业者】心理咨询师、治疗师，希望学习颅骶椎等身心整合技术，拓展专业工具箱，提升疗愈效果
+
+【技术学习者】对颅骶疗法、身心整合技术感兴趣，想系统学习并应用于儿童青少年实践的人群
+
+【教育机构】幼儿园、学校、培训机构，关注学生心智发展和心理健康支持，寻求专业技术合作"</textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">核心价值主张</label>
+                                    <textarea rows="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none">独创「心理学+颅骶椎技术」身心整合疗愈体系，专注5-25岁儿童青少年心智成长。融合现代发展心理学与颅骶疗法，从身心整合角度帮助家长理解孩子行为背后的深层原因，提供科学、温和、非侵入式的整体解决方案。让每个孩子都能被真正看见，让每个家庭都能找到属于自己的成长之路。</textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">差异化优势</label>
+                                    <textarea rows="3" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none">1. 技术融合独特性：国内少有的将现代心理学与颅骶椎技术系统整合的身心疗愈专家
+2. 专注儿童青少年：5-25岁心智成长黄金期，区别于泛心理健康赛道
+3. 家长教育并行：不仅疗愈孩子，更赋能家长理解和支持孩子
+4. 科学温和干预：提供基于神经科学和身心医学的非药物调理方案，符合当代家长健康理念
+5. 黄V认证背书：平台认证的专业账号，内容权威可信</textarea>
+                                </div>
+                                
+                                <div class="flex gap-4 pt-4">
+                                    <button class="btn-primary px-6 py-3 rounded-xl text-white font-medium flex-1">
+                                        <i data-lucide="sparkles" class="w-4 h-4 inline mr-2"></i>
+                                        AI 优化定位
+                                    </button>
+                                    <button class="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                        保存定位
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Content Page -->
+                <div id="page-content-plan" class="page-section hidden animate-fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2">内容策划</h3>
+                            <p class="text-slate-500 dark:text-slate-400">选题库、爆款分析、内容日历一站式管理</p>
+                        </div>
+                        <button class="btn-primary px-5 py-2.5 rounded-xl text-white font-medium flex items-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            新建选题
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Topic Bank -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <div class="glass-card rounded-2xl p-6">
+                                <div class="flex items-center justify-between mb-6">
+                                    <h4 class="font-semibold text-lg flex items-center gap-2">
+                                        <i data-lucide="lightbulb" class="w-5 h-5 text-amber-500"></i>
+                                        选题库
+                                    </h4>
+                                    <div class="flex gap-2">
+                                        <button class="px-3 py-1.5 rounded-lg text-sm bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 font-medium">全部</button>
+                                        <button class="px-3 py-1.5 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">待制作</button>
+                                        <button class="px-3 py-1.5 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">已发布</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="space-y-3">
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-700 transition-colors cursor-pointer">
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center flex-shrink-0">
+                                                <i data-lucide="flame" class="w-5 h-5 text-amber-600"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h5 class="font-medium mb-1">「颅骶疗法改善孩子专注力」系列</h5>
+                                                <p class="text-sm text-slate-400 mb-2">针对5-12岁家长，讲解颅骶椎技术如何帮助注意力不集中的孩子</p>
+                                                <div class="flex items-center gap-4 text-xs text-slate-400">
+                                                    <span class="flex items-center gap-1"><i data-lucide="video" class="w-3 h-3"></i> 短视频</span>
+                                                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> 计划4月20日发布</span>
+                                                    <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">高热度</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-700 transition-colors cursor-pointer">
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
+                                                <i data-lucide="brain" class="w-5 h-5 text-blue-600"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h5 class="font-medium mb-1">「身心整合视角：解读儿童情绪问题」</h5>
+                                                <p class="text-sm text-slate-400 mb-2">从心理学与颅骶技术融合角度，帮助家长理解孩子情绪背后的身心关联</p>
+                                                <div class="flex items-center gap-4 text-xs text-slate-400">
+                                                    <span class="flex items-center gap-1"><i data-lucide="file-text" class="w-3 h-3"></i> 图文</span>
+                                                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> 计划4月19日发布</span>
+                                                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">待制作</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-700 transition-colors cursor-pointer">
+                                        <div class="flex items-start gap-4">
+                                            <div class="w-10 h-10 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
+                                                <i data-lucide="heart-handshake" class="w-5 h-5 text-purple-600"></i>
+                                            </div>
+                                            <div class="flex-1">
+                                                <h5 class="font-medium mb-1">「心理咨询师如何学习颅骶技术」</h5>
+                                                <p class="text-sm text-slate-400 mb-2">面向心理从业者，介绍颅骶疗法的学习路径和应用场景</p>
+                                                <div class="flex items-center gap-4 text-xs text-slate-400">
+                                                    <span class="flex items-center gap-1"><i data-lucide="video" class="w-3 h-3"></i> 短视频</span>
+                                                    <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> 计划中</span>
+                                                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">创意阶段</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Trending Analysis -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                                    <i data-lucide="trending-up" class="w-5 h-5 text-green-500"></i>
+                                    爆款内容分析
+                                </h4>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <p class="text-sm text-slate-400 mb-1">家庭教育赛道</p>
+                                        <p class="font-semibold mb-2">「孩子注意力不集中」类内容</p>
+                                        <div class="flex items-center gap-2 text-xs">
+                                            <span class="text-green-500 flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 h-3"></i> +52%</span>
+                                            <span class="text-slate-400">近7天热度</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <p class="text-sm text-slate-400 mb-1">心理健康赛道</p>
+                                        <p class="font-semibold mb-2">「儿童情绪管理」话题</p>
+                                        <div class="flex items-center gap-2 text-xs">
+                                            <span class="text-green-500 flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 h-3"></i> +38%</span>
+                                            <span class="text-slate-400">近7天热度</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <p class="text-sm text-slate-400 mb-1">身心疗愈赛道</p>
+                                        <p class="font-semibold mb-2">「颅骶疗法/非药物干预」</p>
+                                        <div class="flex items-center gap-2 text-xs">
+                                            <span class="text-green-500 flex items-center gap-1"><i data-lucide="arrow-up" class="w-3 h-3"></i> +65%</span>
+                                            <span class="text-slate-400">近7天热度</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                                        <p class="text-sm text-amber-600 dark:text-amber-400 mb-1 flex items-center gap-1">
+                                            <i data-lucide="flame" class="w-3 h-3"></i> 实时爆款追踪
+                                        </p>
+                                        <p class="font-semibold text-sm mb-1">「儿童专注力」话题持续升温</p>
+                                        <p class="text-xs text-slate-500">建议跟进创作相关内容</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Calendar Preview -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <h4 class="font-semibold text-lg mb-6">内容日历</h4>
+                            <div class="grid grid-cols-7 gap-1 text-center text-xs mb-2">
+                                <span class="text-slate-400">日</span>
+                                <span class="text-slate-400">一</span>
+                                <span class="text-slate-400">二</span>
+                                <span class="text-slate-400">三</span>
+                                <span class="text-slate-400">四</span>
+                                <span class="text-slate-400">五</span>
+                                <span class="text-slate-400">六</span>
+                            </div>
+                            <div class="grid grid-cols-7 gap-1">
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-400">13</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-400">14</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-400">15</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-400">16</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-400">17</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg bg-primary-500 text-white font-medium">18</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">19</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">20</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">21</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">22</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">23</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">24</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">25</span>
+                                <span class="aspect-square flex items-center justify-center rounded-lg text-slate-600 dark:text-slate-300">26</span>
+                            </div>
+                            
+                            <div class="mt-6 space-y-3">
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="w-3 h-3 rounded-full bg-primary-500"></div>
+                                    <span class="text-slate-400">今天 (3条)</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+                                    <span class="text-slate-400">计划中 (5条)</span>
+                                </div>
+                                <div class="flex items-center gap-2 text-sm">
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                    <span class="text-slate-400">已发布 (12条)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Production Page -->
+                <div id="page-production" class="page-section hidden animate-fade-in">
+                    <div class="text-center mb-10">
+                        <h3 class="text-2xl font-bold mb-3">内容生产</h3>
+                        <p class="text-slate-500 dark:text-slate-400">AI 辅助生成脚本、文案、图文，提升创作效率</p>
+                    </div>
+                    
+                    <!-- Platform Distribution Mode Toggle -->
+                    <div class="max-w-4xl mx-auto mb-8">
+                        <div class="glass-card rounded-2xl p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h4 class="font-semibold text-lg flex items-center gap-2">
+                                    <i data-lucide="share-2" class="w-5 h-5 text-primary-500"></i>
+                                    分发模式
+                                </h4>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm text-slate-400">一视频多平台</span>
+                                    <button id="distribution-toggle" onclick="toggleDistributionMode()" class="w-12 h-6 rounded-full bg-primary-500 relative transition-colors">
+                                        <span class="absolute right-1 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="platform-selection" class="grid grid-cols-3 gap-4">
+                                <label class="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 cursor-pointer hover:border-primary-300 transition-colors">
+                                    <input type="checkbox" checked class="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-black dark:bg-white flex items-center justify-center">
+                                            <span class="text-white dark:text-black font-bold text-xs">抖音</span>
+                                        </div>
+                                        <span class="font-medium">抖音</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 cursor-pointer hover:border-primary-300 transition-colors">
+                                    <input type="checkbox" checked class="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-green-500 flex items-center justify-center">
+                                            <i data-lucide="play-circle" class="w-4 h-4 text-white"></i>
+                                        </div>
+                                        <span class="font-medium">视频号</span>
+                                    </div>
+                                </label>
+                                <label class="flex items-center gap-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 cursor-pointer hover:border-primary-300 transition-colors">
+                                    <input type="checkbox" class="w-5 h-5 rounded border-slate-300 text-primary-600 focus:ring-primary-500">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-8 h-8 rounded-lg bg-red-500 flex items-center justify-center">
+                                            <span class="text-white font-bold text-xs">小红书</span>
+                                        </div>
+                                        <span class="font-medium">小红书</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <p class="text-sm text-slate-400 mt-4">开启后，系统将生成适配各平台的标题、标签和文案变体</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 1: Generate 10 Topics -->
+                    <div class="max-w-4xl mx-auto mb-8">
+                        <div class="glass-card rounded-2xl p-8">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold">1</div>
+                                <h4 class="font-semibold text-lg">生成 10 条短视频主题</h4>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">内容方向</label>
+                                    <select id="content-direction" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                        <option value="parent">家长教育类（面向5-25岁家长）</option>
+                                        <option value="professional">从业者专业类（面向心理/疗愈从业者）</option>
+                                        <option value="case">案例分享类（真实疗愈故事）</option>
+                                        <option value="knowledge">知识科普类（颅骶/心理学/身心整合）</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">核心关键词（可选）</label>
+                                    <input type="text" id="topic-keywords" placeholder="例如：专注力、情绪管理、颅骶疗法" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                </div>
+                            </div>
+                            
+                            <button onclick="generateTopics()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium w-full">
+                                <i data-lucide="sparkles" class="w-4 h-4 inline mr-2"></i>
+                                生成 10 条主题
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Generated Topics List -->
+                    <div id="topics-list" class="max-w-4xl mx-auto mb-8 hidden">
+                        <div class="glass-card rounded-2xl p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold">2</div>
+                                    <h4 class="font-semibold text-lg">选择主题展开创作</h4>
+                                </div>
+                                <button onclick="regenerateTopics()" class="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+                                    <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                    重新生成
+                                </button>
+                            </div>
+                            
+                            <div id="topics-container" class="space-y-3">
+                                <!-- Topics will be inserted here -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Script Detail Form -->
+                    <div id="script-detail" class="max-w-4xl mx-auto hidden">
+                        <div class="glass-card rounded-2xl p-8">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold">3</div>
+                                <h4 class="font-semibold text-lg">展开脚本详情</h4>
+                            </div>
+                            
+                            <div class="mb-6 p-4 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800">
+                                <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">当前主题</p>
+                                <p id="selected-topic-text" class="font-medium text-lg"></p>
+                            </div>
+                            
+                            <div class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">视频时长</label>
+                                        <select id="script-duration" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                            <option value="30">30秒以内</option>
+                                            <option value="60" selected>30-60秒</option>
+                                            <option value="180">1-3分钟</option>
+                                            <option value="300">3-5分钟</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">视频形式</label>
+                                        <select id="script-format" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                            <option value="talk">口播讲解</option>
+                                            <option value="demo">实操演示</option>
+                                            <option value="story">案例故事</option>
+                                            <option value="qa">问答互动</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">目标受众</label>
+                                        <select id="script-audience" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                            <option value="parent">5-12岁家长</option>
+                                            <option value="teen-parent">13-18岁家长</option>
+                                            <option value="professional">心理从业者</option>
+                                            <option value="educator">教育机构</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">核心信息点（可选）</label>
+                                    <textarea id="script-keypoints" rows="3" placeholder="列出你想在视频中传达的关键信息点，用逗号分隔..." class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"></textarea>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">风格调性</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <button type="button" class="style-btn px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm hover:border-primary-500 hover:text-primary-600 transition-colors" data-style="professional">专业权威</button>
+                                        <button type="button" class="style-btn px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm hover:border-primary-500 hover:text-primary-600 transition-colors" data-style="warm">亲切温暖</button>
+                                        <button type="button" class="style-btn px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm hover:border-primary-500 hover:text-primary-600 transition-colors" data-style="practical">实用干货</button>
+                                        <button type="button" class="style-btn px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm hover:border-primary-500 hover:text-primary-600 transition-colors" data-style="story">故事讲述</button>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex gap-4 pt-4">
+                                    <button onclick="generateScript()" class="btn-primary px-6 py-3 rounded-xl text-white font-medium flex-1">
+                                        <i data-lucide="file-text" class="w-4 h-4 inline mr-2"></i>
+                                        生成完整脚本
+                                    </button>
+                                    <button onclick="backToTopics()" class="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                        返回主题列表
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Generated Script Result -->
+                    <div id="script-result" class="max-w-4xl mx-auto hidden">
+                        <div class="glass-card rounded-2xl p-8">
+                            <div class="flex items-center justify-between mb-6">
+                                <h4 class="font-semibold text-lg flex items-center gap-2">
+                                    <i data-lucide="check-circle" class="w-5 h-5 text-green-500"></i>
+                                    脚本生成完成
+                                </h4>
+                                <div class="flex gap-2">
+                                    <button onclick="copyScript()" class="px-4 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
+                                        <i data-lucide="copy" class="w-4 h-4"></i>
+                                        复制脚本
+                                    </button>
+                                    <button onclick="saveScript()" class="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm hover:bg-primary-600 transition-colors flex items-center gap-2">
+                                        <i data-lucide="save" class="w-4 h-4"></i>
+                                        保存到选题库
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div id="script-content" class="space-y-6">
+                                <!-- Script content will be inserted here -->
+                            </div>
+                            
+                            <!-- Multi-Platform Adaptation -->
+                            <div class="mt-8 pt-8 border-t border-slate-200 dark:border-slate-700">
+                                <h5 class="font-medium mb-4 flex items-center gap-2">
+                                    <i data-lucide="layers" class="w-4 h-4 text-primary-500"></i>
+                                    多平台适配版本
+                                </h5>
+                                <div class="space-y-4">
+                                    <!-- Douyin Version -->
+                                    <div class="p-4 rounded-xl bg-black text-white">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <span class="px-2 py-1 rounded bg-white/20 text-xs font-medium">抖音版</span>
+                                            <span class="text-xs text-white/60">建议时长：45-60秒</span>
+                                        </div>
+                                        <p class="text-sm mb-2"><span class="text-white/60">标题：</span>孩子上课走神？可能不是态度问题！#儿童专注力 #颅骶疗法 #家长必读</p>
+                                        <p class="text-sm mb-2"><span class="text-white/60">标签：</span>#注意力不集中 #儿童健康 #科学育儿 #刘彭远 #心智成长</p>
+                                        <p class="text-sm"><span class="text-white/60">文案调整：</span>节奏更快，前3秒更抓人，结尾引导关注+评论</p>
+                                    </div>
+                                    
+                                    <!-- Video Channel Version -->
+                                    <div class="p-4 rounded-xl bg-green-500 text-white">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <span class="px-2 py-1 rounded bg-white/20 text-xs font-medium">视频号版</span>
+                                            <span class="text-xs text-white/60">建议时长：60-90秒</span>
+                                        </div>
+                                        <p class="text-sm mb-2"><span class="text-white/60">标题：</span>从身心整合角度看儿童注意力问题</p>
+                                        <p class="text-sm mb-2"><span class="text-white/60">标签：</span>#家庭教育 #儿童心理 #颅骶疗法 #身心健康</p>
+                                        <p class="text-sm"><span class="text-white/60">文案调整：</span>内容更温和，适合家长社群传播，引导转发给家人</p>
+                                    </div>
+                                    
+                                    <!-- Xiaohongshu Version -->
+                                    <div class="p-4 rounded-xl bg-red-500 text-white">
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <span class="px-2 py-1 rounded bg-white/20 text-xs font-medium">小红书版</span>
+                                            <span class="text-xs text-white/60">建议时长：30-45秒</span>
+                                        </div>
+                                        <p class="text-sm mb-2"><span class="text-white/60">标题：</span>孩子专注力差？可能是这个原因！家长必看🧠</p>
+                                        <p class="text-sm mb-2"><span class="text-white/60">标签：</span>#专注力训练 #儿童成长 #妈妈必看 #科学育儿 #颅骶疗法</p>
+                                        <p class="text-sm"><span class="text-white/60">文案调整：</span>更口语化，多用emoji，引导收藏+私信咨询</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Publish Page -->
+                <div id="page-publish" class="page-section hidden animate-fade-in">
+                    <div class="text-center mb-10">
+                        <h3 class="text-2xl font-bold mb-3">发布辅助</h3>
+                        <p class="text-slate-500 dark:text-slate-400">标题优化、标签推荐、发布时间建议，提升内容曝光</p>
+                    </div>
+                    
+                    <div class="max-w-3xl mx-auto space-y-6">
+                        <div class="glass-card rounded-2xl p-6">
+                            <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                                <i data-lucide="sparkles" class="w-5 h-5 text-amber-500"></i>
+                                标题优化器
+                            </h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">原始标题</label>
+                                    <input type="text" placeholder="输入你的原始标题" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                </div>
+                                <button class="btn-primary px-6 py-3 rounded-xl text-white font-medium w-full">
+                                    <i data-lucide="wand-2" class="w-4 h-4 inline mr-2"></i>
+                                    生成优化标题
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-2xl p-6">
+                            <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                                <i data-lucide="hash" class="w-5 h-5 text-blue-500"></i>
+                                标签推荐
+                            </h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">内容描述</label>
+                                    <textarea rows="3" placeholder="简单描述你的内容主题..." class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"></textarea>
+                                </div>
+                                <button class="btn-primary px-6 py-3 rounded-xl text-white font-medium w-full">
+                                    <i data-lucide="tags" class="w-4 h-4 inline mr-2"></i>
+                                    推荐标签
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-2xl p-6">
+                            <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                                <i data-lucide="clock" class="w-5 h-5 text-green-500"></i>
+                                最佳发布时间
+                            </h4>
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center">
+                                    <p class="text-2xl font-bold text-primary-600">7:00</p>
+                                    <p class="text-xs text-slate-400 mt-1">早高峰</p>
+                                    <div class="mt-2 h-2 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden">
+                                        <div class="h-full w-3/4 progress-bar rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center">
+                                    <p class="text-2xl font-bold text-primary-600">12:00</p>
+                                    <p class="text-xs text-slate-400 mt-1">午休时间</p>
+                                    <div class="mt-2 h-2 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden">
+                                        <div class="h-full w-4/5 progress-bar rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center">
+                                    <p class="text-2xl font-bold text-primary-600">18:00</p>
+                                    <p class="text-xs text-slate-400 mt-1">下班时间</p>
+                                    <div class="mt-2 h-2 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden">
+                                        <div class="h-full w-11/12 progress-bar rounded-full"></div>
+                                    </div>
+                                </div>
+                                <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-center">
+                                    <p class="text-2xl font-bold text-primary-600">21:00</p>
+                                    <p class="text-xs text-slate-400 mt-1">睡前时段</p>
+                                    <div class="mt-2 h-2 rounded-full bg-slate-200 dark:bg-slate-600 overflow-hidden">
+                                        <div class="h-full w-5/6 progress-bar rounded-full"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Xiaohongshu Notes Page -->
+                <div id="page-xiaohongshu" class="page-section hidden animate-fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2">小红书图文笔记</h3>
+                            <p class="text-slate-500 dark:text-slate-400">制作图文笔记，分配给员工进行矩阵分发</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="showEmployeeTasks()" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4"></i>
+                                员工任务
+                            </button>
+                            <button onclick="createXHSNote()" class="btn-primary px-5 py-2.5 rounded-xl text-white font-medium flex items-center gap-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                新建笔记
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Notes List -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Filter Tabs -->
+                            <div class="flex gap-2 flex-wrap">
+                                <button class="px-4 py-2 rounded-lg text-sm bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 font-medium">全部笔记</button>
+                                <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">待分配</button>
+                                <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">进行中</button>
+                                <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">已发布</button>
+                            </div>
+                            
+                            <!-- Notes Grid -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Note Card 1 -->
+                                <div class="glass-card rounded-2xl overflow-hidden card-hover cursor-pointer" onclick="editXHSNote(1)">
+                                    <div class="aspect-[3/4] bg-gradient-to-br from-pink-100 to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30 flex items-center justify-center relative">
+                                        <div class="text-center p-6">
+                                            <i data-lucide="brain" class="w-12 h-12 text-rose-400 mx-auto mb-3"></i>
+                                            <p class="font-medium text-rose-700 dark:text-rose-300">孩子专注力差？</p>
+                                            <p class="text-sm text-rose-600 dark:text-rose-400">可能是颅骶节律问题</p>
+                                        </div>
+                                        <div class="absolute top-3 right-3">
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">待分配</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-2 line-clamp-2">孩子上课走神、注意力不集中？家长必看的颅骶疗法科普</h4>
+                                        <div class="flex items-center justify-between text-sm text-slate-400">
+                                            <span>创建于 4月18日</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="image" class="w-4 h-4"></i> 5张</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Note Card 2 -->
+                                <div class="glass-card rounded-2xl overflow-hidden card-hover cursor-pointer" onclick="editXHSNote(2)">
+                                    <div class="aspect-[3/4] bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 flex items-center justify-center relative">
+                                        <div class="text-center p-6">
+                                            <i data-lucide="moon" class="w-12 h-12 text-cyan-400 mx-auto mb-3"></i>
+                                            <p class="font-medium text-cyan-700 dark:text-cyan-300">儿童睡眠调理</p>
+                                            <p class="text-sm text-cyan-600 dark:text-cyan-400">中医经络+颅骶疗法</p>
+                                        </div>
+                                        <div class="absolute top-3 right-3">
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">进行中</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-2 line-clamp-2">孩子睡不好？试试这个温和的调理方法</h4>
+                                        <div class="flex items-center justify-between text-sm text-slate-400">
+                                            <span>分配给 小王</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="image" class="w-4 h-4"></i> 6张</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Note Card 3 -->
+                                <div class="glass-card rounded-2xl overflow-hidden card-hover cursor-pointer" onclick="editXHSNote(3)">
+                                    <div class="aspect-[3/4] bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 flex items-center justify-center relative">
+                                        <div class="text-center p-6">
+                                            <i data-lucide="heart-handshake" class="w-12 h-12 text-emerald-400 mx-auto mb-3"></i>
+                                            <p class="font-medium text-emerald-700 dark:text-emerald-300">青少年情绪</p>
+                                            <p class="text-sm text-emerald-600 dark:text-emerald-400">家长如何识别信号</p>
+                                        </div>
+                                        <div class="absolute top-3 right-3">
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">已发布</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-2 line-clamp-2">青春期孩子情绪异常？这5个信号家长要注意</h4>
+                                        <div class="flex items-center justify-between text-sm text-slate-400">
+                                            <span>发布于 4月15日</span>
+                                            <span class="flex items-center gap-1 text-green-500"><i data-lucide="trending-up" class="w-4 h-4"></i> 1.2万曝光</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Note Card 4 -->
+                                <div class="glass-card rounded-2xl overflow-hidden card-hover cursor-pointer" onclick="editXHSNote(4)">
+                                    <div class="aspect-[3/4] bg-gradient-to-br from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30 flex items-center justify-center relative">
+                                        <div class="text-center p-6">
+                                            <i data-lucide="sparkles" class="w-12 h-12 text-violet-400 mx-auto mb-3"></i>
+                                            <p class="font-medium text-violet-700 dark:text-violet-300">颅骶疗法入门</p>
+                                            <p class="text-sm text-violet-600 dark:text-violet-400">零基础家长指南</p>
+                                        </div>
+                                        <div class="absolute top-3 right-3">
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">待分配</span>
+                                        </div>
+                                    </div>
+                                    <div class="p-4">
+                                        <h4 class="font-medium mb-2 line-clamp-2">什么是颅骶疗法？一文读懂这个温和的疗愈方式</h4>
+                                        <div class="flex items-center justify-between text-sm text-slate-400">
+                                            <span>创建于 4月17日</span>
+                                            <span class="flex items-center gap-1"><i data-lucide="image" class="w-4 h-4"></i> 8张</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Sidebar -->
+                        <div class="space-y-6">
+                            <!-- Employee Status -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                                    <i data-lucide="users" class="w-5 h-5 text-primary-500"></i>
+                                    员工分发状态
+                                </h4>
+                                <div class="space-y-3">
+                                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-medium">王</div>
+                                            <div>
+                                                <p class="font-medium text-sm">小王</p>
+                                                <p class="text-xs text-slate-400">运营专员</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">3个任务</p>
+                                            <p class="text-xs text-green-500">2待发布 1已完成</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">李</div>
+                                            <div>
+                                                <p class="font-medium text-sm">小李</p>
+                                                <p class="text-xs text-slate-400">内容运营</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">2个任务</p>
+                                            <p class="text-xs text-amber-500">1进行中 1待分配</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-purple-500 text-white flex items-center justify-center text-sm font-medium">张</div>
+                                            <div>
+                                                <p class="font-medium text-sm">小张</p>
+                                                <p class="text-xs text-slate-400">新媒体运营</p>
+                                            </div>
+                                        </div>
+                                        <div class="text-right">
+                                            <p class="text-sm font-medium">4个任务</p>
+                                            <p class="text-xs text-green-500">3已完成 1待发布</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button class="w-full mt-4 py-2.5 rounded-xl border border-dashed border-slate-300 dark:border-slate-600 text-slate-500 hover:border-primary-400 hover:text-primary-600 transition-colors text-sm font-medium">
+                                    + 添加员工账号
+                                </button>
+                            </div>
+                            
+                            <!-- Quick Stats -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h4 class="font-semibold text-lg mb-4">本月数据</h4>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <p class="text-2xl font-bold text-primary-600">24</p>
+                                        <p class="text-xs text-slate-400">发布笔记</p>
+                                    </div>
+                                    <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <p class="text-2xl font-bold text-blue-600">8.5万</p>
+                                        <p class="text-xs text-slate-400">总曝光</p>
+                                    </div>
+                                    <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <p class="text-2xl font-bold text-green-600">3.2%</p>
+                                        <p class="text-xs text-slate-400">互动率</p>
+                                    </div>
+                                    <div class="text-center p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                        <p class="text-2xl font-bold text-purple-600">156</p>
+                                        <p class="text-xs text-slate-400">新增粉丝</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Templates -->
+                            <div class="glass-card rounded-2xl p-6">
+                                <h4 class="font-semibold text-lg mb-4">笔记模板</h4>
+                                <div class="space-y-2">
+                                    <button class="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                        <p class="font-medium text-sm">科普知识类</p>
+                                        <p class="text-xs text-slate-400">适合颅骶疗法原理讲解</p>
+                                    </button>
+                                    <button class="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                        <p class="font-medium text-sm">案例故事类</p>
+                                        <p class="text-xs text-slate-400">真实疗愈案例分享</p>
+                                    </button>
+                                    <button class="w-full p-3 rounded-xl bg-slate-50 dark:bg-slate-700/50 text-left hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                                        <p class="font-medium text-sm">干货教程类</p>
+                                        <p class="text-xs text-slate-400">家长可操作的方法</p>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- XHS Note Editor Modal (Hidden by default) -->
+                    <div id="xhs-editor" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
+                            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <h4 class="font-semibold text-lg">编辑小红书笔记</h4>
+                                <button onclick="closeXHSEditor()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-auto p-6">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Editor -->
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">笔记标题</label>
+                                            <input type="text" placeholder="输入吸引人的标题" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">正文内容</label>
+                                            <textarea rows="10" placeholder="输入笔记正文..." class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"></textarea>
+                                            <p class="text-xs text-slate-400 mt-1">建议 300-800 字，段落分明</p>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">话题标签</label>
+                                            <input type="text" placeholder="#颅骶疗法 #儿童专注力 #家长必读" class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium mb-2">分配给</label>
+                                            <select class="w-full px-4 py-3 rounded-xl bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all">
+                                                <option>暂不分配</option>
+                                                <option>小王（运营专员）</option>
+                                                <option>小李（内容运营）</option>
+                                                <option>小张（新媒体运营）</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <!-- Preview -->
+                                    <div>
+                                        <label class="block text-sm font-medium mb-2">图片上传（3-9张）</label>
+                                        <div class="grid grid-cols-3 gap-2 mb-4">
+                                            <div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-600 cursor-pointer hover:border-primary-400 transition-colors">
+                                                <i data-lucide="plus" class="w-6 h-6 text-slate-400"></i>
+                                            </div>
+                                            <div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-600 cursor-pointer hover:border-primary-400 transition-colors">
+                                                <i data-lucide="plus" class="w-6 h-6 text-slate-400"></i>
+                                            </div>
+                                            <div class="aspect-square rounded-xl bg-slate-100 dark:bg-slate-700 flex items-center justify-center border-2 border-dashed border-slate-300 dark:border-slate-600 cursor-pointer hover:border-primary-400 transition-colors">
+                                                <i data-lucide="plus" class="w-6 h-6 text-slate-400"></i>
+                                            </div>
+                                        </div>
+                                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                            <p class="text-sm font-medium mb-2">预览效果</p>
+                                            <div class="aspect-[3/4] bg-gradient-to-br from-pink-100 to-rose-100 dark:from-pink-900/30 dark:to-rose-900/30 rounded-lg flex items-center justify-center">
+                                                <p class="text-sm text-slate-400">首图预览</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-6 border-t border-slate-200 dark:border-slate-700 flex justify-end gap-3">
+                                <button onclick="closeXHSEditor()" class="px-6 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                                    取消
+                                </button>
+                                <button class="btn-primary px-6 py-2.5 rounded-xl text-white font-medium">
+                                    保存笔记
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Employee Tasks Modal (Hidden by default) -->
+                    <div id="employee-tasks-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+                        <div class="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+                            <div class="p-6 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                                <h4 class="font-semibold text-lg">员工分发任务</h4>
+                                <button onclick="closeEmployeeTasks()" class="p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">
+                                    <i data-lucide="x" class="w-5 h-5"></i>
+                                </button>
+                            </div>
+                            <div class="flex-1 overflow-auto p-6">
+                                <div class="space-y-4">
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-medium">王</div>
+                                                <span class="font-medium">小王</span>
+                                            </div>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700">进行中</span>
+                                        </div>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">「孩子睡不好？试试这个温和的调理方法」</p>
+                                        <p class="text-xs text-slate-400">截止日期：4月20日</p>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center gap-3">
+                                                <div class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-medium">李</div>
+                                                <span class="font-medium">小李</span>
+                                            </div>
+                                            <span class="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">已完成</span>
+                                        </div>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-2">「青春期孩子情绪异常？这5个信号家长要注意」</p>
+                                        <p class="text-xs text-slate-400">发布于：4月15日 · 曝光：1.2万</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Competitor Analysis Page -->
+                <div id="page-competitor" class="page-section hidden animate-fade-in">
+                    <div class="flex items-center justify-between mb-8">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-2">对标账号分析</h3>
+                            <p class="text-slate-500 dark:text-slate-400">研究同赛道优秀博主，实时追踪爆款内容，找到差异化定位</p>
+                        </div>
+                        <div class="flex gap-3">
+                            <button onclick="refreshHotContent()" class="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 font-medium hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors flex items-center gap-2">
+                                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                                刷新爆款
+                            </button>
+                            <button class="btn-primary px-5 py-2.5 rounded-xl text-white font-medium flex items-center gap-2">
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                添加对标账号
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Hot Content Tracker -->
+                    <div class="glass-card rounded-2xl p-6 mb-8 border-2 border-amber-200 dark:border-amber-800">
+                        <div class="flex items-center justify-between mb-6">
+                            <h4 class="font-semibold text-lg flex items-center gap-2">
+                                <i data-lucide="flame" class="w-5 h-5 text-amber-500"></i>
+                                实时爆款追踪
+                                <span class="px-2 py-0.5 rounded-full text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 flex items-center gap-1">
+                                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                    实时更新
+                                </span>
+                            </h4>
+                            <span class="text-sm text-slate-400">最后更新：刚刚</span>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-xs bg-amber-500 text-white font-medium">抖音</span>
+                                    <span class="text-xs text-amber-600 dark:text-amber-400">🔥 128万赞</span>
+                                </div>
+                                <p class="text-sm font-medium mb-2 line-clamp-2">「孩子专注力差？可能是这个原因」</p>
+                                <p class="text-xs text-slate-500">@李玫瑾 · 2小时前</p>
+                                <button onclick="analyzeHotContent('抖音爆款1')" class="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+                                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                    AI解析爆款逻辑
+                                </button>
+                            </div>
+                            <div class="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-xs bg-red-500 text-white font-medium">小红书</span>
+                                    <span class="text-xs text-red-600 dark:text-red-400">🔥 5.2万收藏</span>
+                                </div>
+                                <p class="text-sm font-medium mb-2 line-clamp-2">「青春期家长必看：孩子情绪问题的5个信号」</p>
+                                <p class="text-xs text-slate-500">@武志红 · 4小时前</p>
+                                <button onclick="analyzeHotContent('小红书爆款1')" class="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+                                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                    AI解析爆款逻辑
+                                </button>
+                            </div>
+                            <div class="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-xs bg-green-500 text-white font-medium">视频号</span>
+                                    <span class="text-xs text-green-600 dark:text-green-400">🔥 86万播放</span>
+                                </div>
+                                <p class="text-sm font-medium mb-2 line-clamp-2">「颅骶疗法是什么？一个视频讲清楚」</p>
+                                <p class="text-xs text-slate-500">@颅骶疗愈师XX · 6小时前</p>
+                                <button onclick="analyzeHotContent('视频号爆款1')" class="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+                                    <i data-lucide="sparkles" class="w-3 h-3"></i>
+                                    AI解析爆款逻辑
+                                </button>
+                            </div>
+                            <div class="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <span class="px-2 py-0.5 rounded text-xs bg-blue-500 text-white font-medium">全平台</span>
+                                    <span class="text-xs text-blue-600 dark:text-blue-400">📈 热度上升</span>
+                                </div>
+                                <p class="text-sm font-medium mb-2 line-clamp-2">「ADHD孩子家长的自救指南」</p>
+                                <p class="text-xs text-slate-500">多账号跟进中</p>
+                                <button onclick="generateFollowUp('ADHD话题')" class="mt-2 text-xs text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1">
+                                    <i data-lucide="pen-tool" class="w-3 h-3"></i>
+                                    生成跟进内容
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Competitor List -->
+                        <div class="lg:col-span-2 space-y-6">
+                            <!-- Category Filter -->
+                            <div class="flex gap-2 flex-wrap">
+                                <button class="px-4 py-2 rounded-lg text-sm bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400 font-medium">全部</button>
+                                <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">儿童心理</button>
+                                <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">家庭教育</button>
+                                <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">身心疗愈</button>
+                                <button class="px-4 py-2 rounded-lg text-sm text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700">颅骶疗法</button>
+                            </div>
+                            
+                            <!-- Competitor Cards -->
+                            <div class="space-y-4">
+                                <!-- Competitor 1 -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-pink-400 to-rose-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                                            李
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <h4 class="font-semibold text-lg">李玫瑾</h4>
+                                                    <p class="text-sm text-slate-400">犯罪心理学教授 · 青少年心理专家</p>
+                                                </div>
+                                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">头部账号</span>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">1200万+</p>
+                                                    <p class="text-xs text-slate-400">粉丝数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">500+</p>
+                                                    <p class="text-xs text-slate-400">作品数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">50万+</p>
+                                                    <p class="text-xs text-slate-400">均播</p>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <p class="text-sm"><span class="text-slate-400">内容特点：</span>专业权威、案例丰富、语言通俗，擅长用犯罪心理学视角解读青少年问题</p>
+                                                <p class="text-sm"><span class="text-slate-400">近期爆款：</span>「孩子青春期叛逆怎么办」「如何识别孩子的危险信号」</p>
+                                                <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mt-3">
+                                                    <p class="text-xs text-amber-700 dark:text-amber-400 font-medium mb-1">🔥 最新爆款追踪</p>
+                                                    <p class="text-sm">「专注力训练」话题昨日新增播放 500万+</p>
+                                                    <p class="text-xs text-slate-500 mt-1">建议跟进角度：从颅骶节律解读专注力问题</p>
+                                                </div>
+                                                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                                                    <p class="text-sm text-primary-600 font-medium">💡 对标价值：学习其专业内容的通俗化表达，建立权威感的同时保持亲和力</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Competitor 2 -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                                            武
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <h4 class="font-semibold text-lg">武志红</h4>
+                                                    <p class="text-sm text-slate-400">知名心理咨询师 · 心理学作家</p>
+                                                </div>
+                                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">头部账号</span>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">800万+</p>
+                                                    <p class="text-xs text-slate-400">粉丝数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">1000+</p>
+                                                    <p class="text-xs text-slate-400">作品数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">30万+</p>
+                                                    <p class="text-xs text-slate-400">均播</p>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <p class="text-sm"><span class="text-slate-400">内容特点：</span>深度心理分析、原生家庭话题、个人成长，内容有深度且引发共鸣</p>
+                                                <p class="text-sm"><span class="text-slate-400">近期爆款：</span>「原生家庭的影响」「为什么你总是重复同样的错误」</p>
+                                                <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mt-3">
+                                                    <p class="text-xs text-amber-700 dark:text-amber-400 font-medium mb-1">🔥 最新爆款追踪</p>
+                                                    <p class="text-sm">「情绪管理」系列本周互动率 12.5%</p>
+                                                    <p class="text-xs text-slate-500 mt-1">建议跟进角度：儿童情绪问题的身心整合解读</p>
+                                                </div>
+                                                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                                                    <p class="text-sm text-primary-600 font-medium">💡 对标价值：学习其深度内容的短视频化表达，以及引发情感共鸣的叙事技巧</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Competitor 3 -->
+                                <div class="glass-card rounded-2xl p-6">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                                            张
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <h4 class="font-semibold text-lg">张怡筠</h4>
+                                                    <p class="text-sm text-slate-400">情商教育专家 · 亲子沟通专家</p>
+                                                </div>
+                                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">腰部账号</span>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">200万+</p>
+                                                    <p class="text-xs text-slate-400">粉丝数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">800+</p>
+                                                    <p class="text-xs text-slate-400">作品数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">8万+</p>
+                                                    <p class="text-xs text-slate-400">均播</p>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <p class="text-sm"><span class="text-slate-400">内容特点：</span>情商教育、亲子沟通技巧，实用性强，家长易于操作</p>
+                                                <p class="text-sm"><span class="text-slate-400">近期爆款：</span>「如何培养孩子的情商」「孩子发脾气时家长该怎么做」</p>
+                                                <div class="p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mt-3">
+                                                    <p class="text-xs text-amber-700 dark:text-amber-400 font-medium mb-1">🔥 最新爆款追踪</p>
+                                                    <p class="text-sm">「亲子沟通」话题热度持续上升</p>
+                                                    <p class="text-xs text-slate-500 mt-1">建议跟进角度：颅骶疗法辅助下的亲子互动技巧</p>
+                                                </div>
+                                                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                                                    <p class="text-sm text-primary-600 font-medium">💡 对标价值：学习其将心理学理论转化为家长可操作的具体方法</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Competitor 4 - 颅骶疗法相关 -->
+                                <div class="glass-card rounded-2xl p-6 border-2 border-primary-200 dark:border-primary-800">
+                                    <div class="flex items-start gap-4">
+                                        <div class="w-16 h-16 rounded-full bg-gradient-to-br from-purple-400 to-violet-500 flex items-center justify-center text-white text-xl font-bold flex-shrink-0">
+                                            颅
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-2">
+                                                <div>
+                                                    <h4 class="font-semibold text-lg">颅骶疗愈师XX</h4>
+                                                    <p class="text-sm text-slate-400">颅骶椎治疗师 · 身心整合疗愈</p>
+                                                </div>
+                                                <span class="px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">蓝海机会</span>
+                                            </div>
+                                            <div class="grid grid-cols-3 gap-4 mb-4">
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">5万+</p>
+                                                    <p class="text-xs text-slate-400">粉丝数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">100+</p>
+                                                    <p class="text-xs text-slate-400">作品数</p>
+                                                </div>
+                                                <div class="text-center p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50">
+                                                    <p class="font-bold text-lg">1万+</p>
+                                                    <p class="text-xs text-slate-400">均播</p>
+                                                </div>
+                                            </div>
+                                            <div class="space-y-2">
+                                                <p class="text-sm"><span class="text-slate-400">内容特点：</span>颅骶疗法科普、个案分享，但内容较零散，缺乏系统化</p>
+                                                <p class="text-sm"><span class="text-slate-400">爆款内容：</span>「什么是颅骶疗法」「颅骶疗法可以改善哪些问题」</p>
+                                                <div class="pt-2 border-t border-slate-200 dark:border-slate-700">
+                                                    <p class="text-sm text-green-600 font-medium">🎯 机会点：颅骶疗法+儿童青少年赛道几乎空白，系统化内容有巨大机会</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Analysis Sidebar -->
+                        <div class="space-y-6">
+                            <div class="glass-card rounded-2xl p-6">
+                                <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                                    <i data-lucide="lightbulb" class="w-5 h-5 text-amber-500"></i>
+                                    差异化机会
+                                </h4>
+                                <div class="space-y-4">
+                                    <div class="p-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                                        <p class="font-medium text-green-700 dark:text-green-400 mb-1">🎯 蓝海赛道</p>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300">颅骶疗法+儿童青少年心智成长，目前几乎无头部账号</p>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                                        <p class="font-medium text-blue-700 dark:text-blue-400 mb-1">💎 独特定位</p>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300">心理学×颅骶椎技术身心整合，区别于单一技术流派</p>
+                                    </div>
+                                    <div class="p-4 rounded-xl bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+                                        <p class="font-medium text-purple-700 dark:text-purple-400 mb-1">👥 精准受众</p>
+                                        <p class="text-sm text-slate-600 dark:text-slate-300">同时服务家长和从业者，形成内容-培训-服务的闭环</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="glass-card rounded-2xl p-6">
+                                <h4 class="font-semibold text-lg mb-4 flex items-center gap-2">
+                                    <i data-lucide="trending-up" class="w-5 h-5 text-primary-500"></i>
+                                    内容策略建议
+                                </h4>
+                                <div class="space-y-3 text-sm">
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                                        <p><span class="font-medium">科普入门：</span>用通俗语言解释颅骶疗法原理，降低认知门槛</p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                                        <p><span class="font-medium">案例故事：</span>真实疗愈案例，展现技术效果和人文关怀</p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>
+                                        <p><span class="font-medium">家长教育：</span>帮助家长理解孩子行为背后的心理生理原因</p>
+                                    </div>
+                                    <div class="flex items-start gap-3">
+                                        <span class="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-600 flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>
+                                        <p><span class="font-medium">专业培训：</span>面向从业者，建立技术权威和培训体系</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Analytics Page -->
+                <div id="page-analytics" class="page-section hidden animate-fade-in">
+                    <div class="text-center mb-10">
+                        <h3 class="text-2xl font-bold mb-3">数据复盘</h3>
+                        <p class="text-slate-500 dark:text-slate-400">账号诊断、内容分析、增长追踪，用数据驱动运营决策</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Account Health -->
+                        <div class="glass-card rounded-2xl p-6">
+                            <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                                <i data-lucide="activity" class="w-5 h-5 text-green-500"></i>
+                                账号健康度
+                            </h4>
+                            <div class="relative w-40 h-40 mx-auto mb-6">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="8" class="text-slate-200 dark:text-slate-700"/>
+                                    <circle cx="50" cy="50" r="45" fill="none" stroke="url(#gradient)" stroke-width="8" stroke-linecap="round" stroke-dasharray="283" stroke-dashoffset="70"/>
+                                    <defs>
+                                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                            <stop offset="0%" stop-color="#14b8a6"/>
+                                            <stop offset="100%" stop-color="#2dd4bf"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="absolute inset-0 flex items-center justify-center">
+                                    <div class="text-center">
+                                        <span class="text-4xl font-bold gradient-text">75</span>
+                                        <p class="text-xs text-slate-400">健康分</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-slate-400">内容质量</span>
+                                    <span class="font-medium text-green-500">优秀</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-slate-400">更新频率</span>
+                                    <span class="font-medium text-amber-500">良好</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-slate-400">互动表现</span>
+                                    <span class="font-medium text-green-500">优秀</span>
+                                </div>
+                                <div class="flex items-center justify-between text-sm">
+                                    <span class="text-slate-400">粉丝增长</span>
+                                    <span class="font-medium text-slate-400">待提升</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Content Performance -->
+                        <div class="lg:col-span-2 glass-card rounded-2xl p-6">
+                            <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                                <i data-lucide="bar-chart-2" class="w-5 h-5 text-blue-500"></i>
+                                内容表现分析
+                            </h4>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                    <div class="w-12 h-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+                                        <i data-lucide="trending-up" class="w-6 h-6 text-green-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">表现最佳内容</p>
+                                        <p class="text-sm text-slate-400">「职场妈妈的时间管理3个技巧」</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold">128K</p>
+                                        <p class="text-xs text-slate-400">播放量</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                    <div class="w-12 h-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
+                                        <i data-lucide="heart" class="w-6 h-6 text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">最高互动内容</p>
+                                        <p class="text-sm text-slate-400">「青少年情绪管理，家长必看」</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold">8.5%</p>
+                                        <p class="text-xs text-slate-400">互动率</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                    <div class="w-12 h-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
+                                        <i data-lucide="share-2" class="w-6 h-6 text-purple-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-medium">最多分享内容</p>
+                                        <p class="text-sm text-slate-400">「颅骶疗法：一种温和的疗愈方式」</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold">2.3K</p>
+                                        <p class="text-xs text-slate-400">分享数</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Growth Trend -->
+                    <div class="mt-6 glass-card rounded-2xl p-6">
+                        <h4 class="font-semibold text-lg mb-6 flex items-center gap-2">
+                            <i data-lucide="line-chart" class="w-5 h-5 text-primary-500"></i>
+                            增长趋势
+                        </h4>
+                        <div class="h-64 flex items-end justify-between gap-2 px-4">
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-primary-200 dark:bg-primary-900/30 rounded-t-lg" style="height: 30%"></div>
+                                <span class="text-xs text-slate-400">4/12</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-primary-300 dark:bg-primary-800/40 rounded-t-lg" style="height: 45%"></div>
+                                <span class="text-xs text-slate-400">4/13</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-primary-300 dark:bg-primary-800/40 rounded-t-lg" style="height: 40%"></div>
+                                <span class="text-xs text-slate-400">4/14</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-primary-400 dark:bg-primary-700/50 rounded-t-lg" style="height: 55%"></div>
+                                <span class="text-xs text-slate-400">4/15</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-primary-400 dark:bg-primary-700/50 rounded-t-lg" style="height: 60%"></div>
+                                <span class="text-xs text-slate-400">4/16</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-primary-500 dark:bg-primary-600 rounded-t-lg" style="height: 75%"></div>
+                                <span class="text-xs text-slate-400">4/17</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full progress-bar rounded-t-lg" style="height: 90%"></div>
+                                <span class="text-xs text-slate-400 font-medium">今天</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-4 px-4">
+                            <span class="text-sm text-slate-400">粉丝增长趋势（近7天）</span>
+                            <span class="text-sm font-medium text-green-500 flex items-center gap-1">
+                                <i data-lucide="trending-up" class="w-4 h-4"></i>
+                                +15.3% 较上周
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Mobile Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="toggleSidebar()"></div>
+    
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+        
+        // Theme management
+        function initTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        }
+        
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+        
+        // Sidebar management
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+        }
+        
+        // Page switching
+        function switchPage(pageName) {
+            // Update navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.add('text-slate-600', 'dark:text-slate-400');
+            });
+            document.querySelector(`[data-page="${pageName}"]`).classList.add('active');
+            document.querySelector(`[data-page="${pageName}"]`).classList.remove('text-slate-600', 'dark:text-slate-400');
+            
+            // Update page title
+            const titles = {
+                'dashboard': '工作台',
+                'positioning': '账号定位',
+                'content': '内容策划',
+                'production': '内容生产',
+                'publish': '发布辅助',
+                'competitor': '对标账号',
+                'xiaohongshu': '小红书图文',
+                'analytics': '数据复盘'
+            };
+            document.getElementById('page-title').textContent = titles[pageName];
+            
+            // Show corresponding page
+            document.querySelectorAll('.page-section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Map page names to IDs
+            const pageIds = {
+                'dashboard': 'page-dashboard',
+                'positioning': 'page-positioning',
+                'content': 'page-content-plan',
+                'production': 'page-production',
+                'publish': 'page-publish',
+                'competitor': 'page-competitor',
+                'xiaohongshu': 'page-xiaohongshu',
+                'analytics': 'page-analytics'
+            };
+            
+            document.getElementById(pageIds[pageName]).classList.remove('hidden');
+            
+            // Close mobile sidebar
+            if (window.innerWidth < 1024) {
+                toggleSidebar();
+            }
+            
+            // Re-initialize icons for new content
+            lucide.createIcons();
+        }
+        
+        // Content Production Functions
+        const sampleTopics = {
+            'parent': [
+                { title: '孩子上课注意力不集中？可能是颅骶节律出了问题', hot: true },
+                { title: '颅骶疗法：改善孩子睡眠的温和方式', hot: false },
+                { title: '为什么你的孩子总是情绪失控？从身心整合角度解读', hot: true },
+                { title: '5个信号说明孩子需要颅骶调理，家长必看', hot: true },
+                { title: '青少年厌学背后：可能是身体在发出求救信号', hot: false },
+                { title: '不用药物，如何帮助孩子缓解焦虑情绪？', hot: true },
+                { title: '孩子多动不一定是ADHD，先检查这个部位', hot: false },
+                { title: '从身心整合视角看儿童情绪：神经系统与情绪调节', hot: false },
+                { title: '颅骶疗法如何帮助自闭症谱系孩子改善社交', hot: true },
+                { title: '家长必学：3分钟颅骶放松手法，睡前给孩子做', hot: false }
+            ],
+            'professional': [
+                { title: '心理咨询师为什么要学习颅骶疗法？', hot: true },
+                { title: '颅骶椎技术与谈话疗法的结合：案例分析', hot: false },
+                { title: '身心整合视角下的儿童心理治疗新思路', hot: true },
+                { title: '创伤疗愈新视角：身体记忆与颅骶工作', hot: true },
+                { title: '如何向家长解释颅骶疗法的原理和效果', hot: false },
+                { title: '儿童颅骶节律评估：实操要点与注意事项', hot: true },
+                { title: '从身心整合角度看青少年抑郁的成因与干预', hot: true },
+                { title: '颅骶疗法在特殊教育领域的应用前景', hot: false },
+                { title: '建立你的颅骶疗愈专业品牌：从0到1指南', hot: false },
+                { title: '与医生合作：颅骶疗法如何融入儿童康复体系', hot: true }
+            ],
+            'case': [
+                { title: '8岁男孩从"问题儿童"到班级前十：一个颅骶疗愈案例', hot: true },
+                { title: '15岁女孩抑郁休学一年后重返校园的真实故事', hot: true },
+                { title: 'ADHD孩子停药后，我们用3个月帮他找回专注力', hot: true },
+                { title: '一个自闭症孩子妈妈的心路历程：从绝望到希望', hot: false },
+                { title: '颅骶疗法如何帮助早产儿追赶发育里程碑', hot: false },
+                { title: '13岁少年厌学、网瘾，身心整合疗愈6个月后的转变', hot: true },
+                { title: '从频繁生病到体质增强：一个5岁女孩的调理记录', hot: false },
+                { title: '分离焦虑严重的幼儿园孩子，2周后主动说再见', hot: false },
+                { title: '一个选择性缄默症孩子的开口之路', hot: true },
+                { title: '颅骶疗愈师手记：我见证的那些生命转变', hot: false }
+            ],
+            'knowledge': [
+                { title: '什么是颅骶节律？3分钟带你了解这个生命律动', hot: true },
+                { title: '硬脑膜系统：连接大脑与身体的隐形网络', hot: false },
+                { title: '身心整合：心理学与颅骶技术的融合之道', hot: true },
+                { title: '儿童颅骨发育：0-18岁的关键变化', hot: false },
+                { title: '压力如何影响孩子的颅骶节律？科学解释', hot: true },
+                { title: '迷走神经与情绪调节：颅骶疗法的神经科学基础', hot: true },
+                { title: '什么是创伤的躯体化？身体如何记住心理创伤', hot: false },
+                { title: '副交感神经系统：孩子平静与专注的生理基础', hot: false },
+                { title: '颅骶疗法的历史：从整骨医学到现代身心疗愈', hot: false },
+                { title: '如何识别孩子的颅骶节律？家长也能学会的简单方法', hot: true }
+            ]
+        };
+        
+        let currentTopics = [];
+        let selectedTopic = null;
+        
+        function generateTopics() {
+            const direction = document.getElementById('content-direction').value;
+            const keywords = document.getElementById('topic-keywords').value;
+            
+            currentTopics = sampleTopics[direction] || sampleTopics['parent'];
+            
+            // If keywords provided, filter or prioritize
+            if (keywords.trim()) {
+                // In real implementation, this would call AI API
+                console.log('Filtering by keywords:', keywords);
+            }
+            
+            renderTopics();
+            
+            document.getElementById('topics-list').classList.remove('hidden');
+            document.getElementById('script-detail').classList.add('hidden');
+            document.getElementById('script-result').classList.add('hidden');
+            
+            lucide.createIcons();
+        }
+        
+        function regenerateTopics() {
+            generateTopics();
+        }
+        
+        function renderTopics() {
+            const container = document.getElementById('topics-container');
+            container.innerHTML = currentTopics.map((topic, index) => `
+                <div class="flex items-center gap-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600 hover:border-primary-300 dark:hover:border-primary-700 transition-all cursor-pointer group" onclick="selectTopic(${index})">
+                    <div class="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
+                        <span class="text-sm font-bold text-primary-600">${index + 1}</span>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-medium group-hover:text-primary-600 transition-colors">${topic.title}</p>
+                    </div>
+                    ${topic.hot ? '<span class="px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 flex items-center gap-1"><i data-lucide="flame" class="w-3 h-3"></i> 高热度</span>' : ''}
+                    <button class="px-4 py-2 rounded-lg bg-primary-500 text-white text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
+                        展开创作
+                    </button>
+                </div>
+            `).join('');
+        }
+        
+        function selectTopic(index) {
+            selectedTopic = currentTopics[index];
+            document.getElementById('selected-topic-text').textContent = selectedTopic.title;
+            document.getElementById('topics-list').classList.add('hidden');
+            document.getElementById('script-detail').classList.remove('hidden');
+            document.getElementById('script-result').classList.add('hidden');
+            lucide.createIcons();
+        }
+        
+        function backToTopics() {
+            document.getElementById('topics-list').classList.remove('hidden');
+            document.getElementById('script-detail').classList.add('hidden');
+            document.getElementById('script-result').classList.add('hidden');
+        }
+        
+        function generateScript() {
+            const duration = document.getElementById('script-duration').value;
+            const format = document.getElementById('script-format').value;
+            const audience = document.getElementById('script-audience').value;
+            const keypoints = document.getElementById('script-keypoints').value;
+            
+            // In real implementation, this would call AI API
+            const scriptHTML = `
+                <div class="space-y-6">
+                    <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mb-1">视频主题</p>
+                        <p class="font-medium text-lg">${selectedTopic.title}</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
+                            <p class="text-xs text-slate-400">时长</p>
+                            <p class="font-medium">${duration}秒</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
+                            <p class="text-xs text-slate-400">形式</p>
+                            <p class="font-medium">${format === 'talk' ? '口播' : format === 'demo' ? '演示' : format === 'story' ? '故事' : '问答'}</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
+                            <p class="text-xs text-slate-400">受众</p>
+                            <p class="font-medium">${audience === 'parent' ? '5-12岁家长' : audience === 'teen-parent' ? '13-18岁家长' : audience === 'professional' ? '从业者' : '教育机构'}</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-slate-50 dark:bg-slate-700/50 text-center">
+                            <p class="text-xs text-slate-400">预估字数</p>
+                            <p class="font-medium">${Math.round(duration * 2.5)}字</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="layout-template" class="w-4 h-4 text-primary-500"></i>
+                            文案框架
+                        </h5>
+                        <div class="space-y-3">
+                            <div class="flex gap-3">
+                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">0-5秒</span>
+                                <div class="flex-1 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+                                    <p class="font-medium text-sm text-amber-700 dark:text-amber-400">黄金3秒 - 抓人眼球</p>
+                                    <p class="text-sm mt-1">"你知道吗？孩子上课走神，可能不是态度问题，而是身体在发出信号..."</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">5-20秒</span>
+                                <div class="flex-1 p-3 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
+                                    <p class="font-medium text-sm text-blue-700 dark:text-blue-400">问题阐述 - 建立共鸣</p>
+                                    <p class="text-sm mt-1">很多家长都遇到过这种情况：孩子坐不住、注意力分散、学习效率低...</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">20-45秒</span>
+                                <div class="flex-1 p-3 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                                    <p class="font-medium text-sm text-green-700 dark:text-green-400">解决方案 - 提供价值</p>
+                                    <p class="text-sm mt-1">从颅骶疗法的角度看，这可能与孩子的颅骶节律失衡有关。通过温和的颅骶调理...</p>
+                                </div>
+                            </div>
+                            <div class="flex gap-3">
+                                <span class="w-20 text-sm text-slate-400 flex-shrink-0">45-60秒</span>
+                                <div class="flex-1 p-3 rounded-lg bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800">
+                                    <p class="font-medium text-sm text-purple-700 dark:text-purple-400">行动号召 - 引导互动</p>
+                                    <p class="text-sm mt-1">如果你也想了解更多关于儿童专注力提升的方法，关注我，我是刘彭远...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="file-text" class="w-4 h-4 text-primary-500"></i>
+                            文案逐字稿
+                        </h5>
+                        <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50 border border-slate-200 dark:border-slate-600">
+                            <p class="text-sm leading-relaxed whitespace-pre-line">你知道吗？孩子上课走神、注意力不集中，可能不是态度问题，而是身体在发出信号。
+
+很多家长都遇到过这种情况：孩子坐不住、学习效率低、老师总反映不专心。打也打了，骂也骂了，就是改不了。
+
+从颅骶疗法的角度看，这可能与孩子的颅骶节律失衡有关。我们的大脑和脊髓被一层薄膜包裹着，这层薄膜有自己的律动节律。当这个节律顺畅时，孩子自然专注、平静；当节律受阻时，就会出现注意力分散、情绪不稳等问题。
+
+通过温和的颅骶调理，不需要药物，不需要强迫训练，只需要帮助孩子恢复自然的身心节律，专注力问题往往能得到明显改善。
+
+如果你也想了解更多关于儿童专注力提升的方法，关注我，我是刘彭远，专注5-25岁儿童青少年心智成长。</p>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h5 class="font-medium mb-3 flex items-center gap-2">
+                            <i data-lucide="camera" class="w-4 h-4 text-primary-500"></i>
+                            拍摄建议
+                        </h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                <p class="text-sm font-medium mb-2">画面建议</p>
+                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                                    <li>• 近景口播，背景简洁专业</li>
+                                    <li>• 可插入孩子学习的画面素材</li>
+                                    <li>• 关键信息可配文字强调</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-700/50">
+                                <p class="text-sm font-medium mb-2">声音建议</p>
+                                <ul class="text-sm text-slate-600 dark:text-slate-300 space-y-1">
+                                    <li>• 语速适中，亲切温和</li>
+                                    <li>• 背景音乐轻柔不抢戏</li>
+                                    <li>• 重点处可稍作停顿</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('script-content').innerHTML = scriptHTML;
+            document.getElementById('script-detail').classList.add('hidden');
+            document.getElementById('script-result').classList.remove('hidden');
+            lucide.createIcons();
+        }
+        
+        function copyScript() {
+            const scriptText = document.querySelector('#script-content .whitespace-pre-line')?.textContent || '';
+            navigator.clipboard.writeText(scriptText).then(() => {
+                alert('脚本已复制到剪贴板');
+            });
+        }
+        
+        function saveScript() {
+            alert('脚本已保存到选题库');
+        }
+        
+        // Style button selection
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('style-btn')) {
+                document.querySelectorAll('.style-btn').forEach(btn => {
+                    btn.classList.remove('bg-primary-500', 'text-white', 'border-primary-500');
+                    btn.classList.add('border-slate-300', 'dark:border-slate-600');
+                });
+                e.target.classList.remove('border-slate-300', 'dark:border-slate-600');
+                e.target.classList.add('bg-primary-500', 'text-white', 'border-primary-500');
+            }
+        });
+        
+        // Xiaohongshu Functions
+        function createXHSNote() {
+            document.getElementById('xhs-editor').classList.remove('hidden');
+            lucide.createIcons();
+        }
+        
+        function editXHSNote(id) {
+            document.getElementById('xhs-editor').classList.remove('hidden');
+            lucide.createIcons();
+        }
+        
+        function closeXHSEditor() {
+            document.getElementById('xhs-editor').classList.add('hidden');
+        }
+        
+        function showEmployeeTasks() {
+            document.getElementById('employee-tasks-modal').classList.remove('hidden');
+            lucide.createIcons();
+        }
+        
+        function closeEmployeeTasks() {
+            document.getElementById('employee-tasks-modal').classList.add('hidden');
+        }
+        
+        // Distribution Mode Toggle
+        let distributionMode = true;
+        function toggleDistributionMode() {
+            distributionMode = !distributionMode;
+            const toggle = document.getElementById('distribution-toggle');
+            const indicator = toggle.querySelector('span');
+            
+            if (distributionMode) {
+                toggle.classList.remove('bg-slate-300');
+                toggle.classList.add('bg-primary-500');
+                indicator.style.transform = 'translateX(0)';
+                document.getElementById('platform-selection').classList.remove('opacity-50', 'pointer-events-none');
+            } else {
+                toggle.classList.remove('bg-primary-500');
+                toggle.classList.add('bg-slate-300');
+                indicator.style.transform = 'translateX(-24px)';
+                document.getElementById('platform-selection').classList.add('opacity-50', 'pointer-events-none');
+            }
+        }
+        
+        // Hot Content Tracking Functions
+        function refreshHotContent() {
+            // Simulate refreshing hot content data
+            const btn = event.target.closest('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> 刷新中...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                lucide.createIcons();
+                alert('爆款数据已更新！发现 3 个新的热门话题');
+            }, 1500);
+        }
+        
+        function analyzeHotContent(contentId) {
+            // AI analysis of hot content logic
+            alert('AI 正在分析爆款内容逻辑...\n\n分析维度：\n• 标题吸引力分析\n• 内容结构拆解\n• 情绪触发点识别\n• 平台算法适配度\n\n生成跟进建议中...');
+        }
+        
+        function generateFollowUp(topic) {
+            // Generate follow-up content based on trending topic
+            alert(`正在基于「${topic}」生成跟进内容...\n\n生成策略：\n• 差异化角度切入\n• 结合颅骶疗法专业视角\n• 适配三平台内容规范\n• 预估爆款潜力评分`);
+        }
+        
+        // Platform Compliance Checker
+        function checkPlatformCompliance(content) {
+            // Check content against platform rules
+            const checks = {
+                douyin: ['无医疗诊断表述', '无绝对化用语', '符合社区规范'],
+                video: ['内容积极向上', '适合家庭观看', '无敏感话题'],
+                xiaohongshu: ['无违规医疗内容', '标签合规', '配图适宜']
+            };
+            return checks;
+        }
+        
+        // Initialize
+        initTheme();
+    </script>
+</body>
+</html>
